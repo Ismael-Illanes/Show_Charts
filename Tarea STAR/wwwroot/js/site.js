@@ -127,12 +127,3 @@ let dp2 = new AirDatepicker('#datepicker2', {
    } 
 })
 
-
-const btnSubmit = document.querySelector('#btnSubmit');
-const fechaInicioInput = document.querySelector('#datepicker1');
-const fechaFinalInput = document.querySelector('#datepicker2');
-
-btnSubmit.addEventListener('click', () => {
-    fechaInicioInput.value = '';
-    fechaFinalInput.value = '';
-});

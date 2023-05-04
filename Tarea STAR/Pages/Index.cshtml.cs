@@ -28,11 +28,6 @@ public class IndexModel : PageModel
 
     }
 
-    public void Changed()
-    {
-        Console.WriteLine("changed");
-    }
-
     public IActionResult OnPost()
     {
         string formato = "dd/MM/yyyy - HH:mm";
