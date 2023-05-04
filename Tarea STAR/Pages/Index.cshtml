@@ -16,7 +16,7 @@
         <div id="calendars">
 <div class="calendar">
     <label for="datepicker1"><h1>Fecha y hora inicial:</h1></label>
-    <input type="text" class="text-center w-100" name="fechaInicio" value="@Model.fechaHora" id="datepicker1" asp-for="@Model.FechaInicio" required autocomplete="off" onchange="FechaInicio_TextChanged" />
+    <input type="text" class="text-center w-100" name="fechaInicio" id="datepicker1" asp-for="@Model.FechaInicio" required autocomplete="off" />
 </div>
 
             <div class="calendar">
@@ -67,107 +67,4 @@ else
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.0/Chart.js"></script>
 <script src="~/js/air-datepicker.js"> </script>
-<script type="text/javascript">
-
-
-var ctx = document.getElementById("myChart").getContext("2d");
-    var myChart = new Chart(ctx, {
-        type: "bar",
-        data: {
-            labels: ['col1', 'col2', 'col3'],
-            datasets: [{
-                label: ['Datos'],
-                data: [10, 9, 15],
-                backgroundColor: [
-                    'rgb(66, 134, 244,0.5)',
-                    'rgb(74, 135, 72,0.5)',
-                    'rgb(229, 89, 50,0.5)'
-                ]
-            }]
-        },
-        options: {
-            responsive: false,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
-                }]
-            }
-        }
-    });
-
-
-
-    let buttonToday = {
-    content: 'Hoy',
-    className: 'custom-button-classname',
-    onClick: (dp) => {
-        let date = new Date();
-        dp.selectDate(date);
-        dp.setViewDate(date);
-    }
-}
-
-    let buttonOK = {
-    content: 'Aceptar',
-    className: 'custom-button-classname',
-    onClick: (dp) => {
-           minDate = datepicker1.value
-            dp.hide()
-    }
-}
-
-let cadena = datepicker1.value;
-let fecha = cadena.split('-')[0];
-
-   
-
-    let dp1 = new AirDatepicker('#datepicker1', {
-        locale: {
-            days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-            daysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-            daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-            months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-            monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-            today: 'Hoy',
-            clear: 'Limpiar',
-            dateFormat: 'dd/MM/yyyy',
-            timeFormat: 'HH:mm',
-            firstDay: 1
-        },
-        buttons: [buttonToday, buttonOK],
-        timepicker: true,
-        dateTimeSeparator:" - ",
-        isMobile: true,
-    })
-
-
-let picker = document.getElementById("datepicker1");
-
-
-
-
-
-
-    let dp2 = new AirDatepicker('#datepicker2', {
-        locale: {
-            days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-            daysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-            daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-            months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-            monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-            today: 'Hoy',
-            clear: 'Limpiar',
-            dateFormat: 'dd/MM/yyyy',
-            timeFormat: 'HH:mm',
-            firstDay: 1
-        },
-        buttons: [buttonToday, buttonOK],
-        timepicker: true,
-        dateTimeSeparator:" - ",
-        isMobile: true,
-         minDate: fecha
-    })
-
-</script>
+<script src="~/js/site.js"></script>
