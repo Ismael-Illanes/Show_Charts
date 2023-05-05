@@ -1,7 +1,28 @@
-﻿
-// for details on configuring this project to bundle and minify static web assets.
+﻿// OBTENCIÓN DE ELEMENTOS BODY
 
-// Write your JavaScript code.
+//const checkBoxes = document.querySelectorAll('.checker');
+
+
+//function checkAllCheckBoxes() {
+//    if (checkBoxes[0].checked) {
+//        for (let i = 1; i < checkBoxes.length; i++) {
+//            checkBoxes[i].checked = true
+//        }
+//    } else {
+//        for (let i = 1; i < checkBoxes.length; i++) {
+//            checkBoxes[i].checked = false
+//        }
+//    }
+//}
+
+
+
+//checkBoxes[0].addEventListener('click', checkAllCheckBoxes)
+
+
+
+
+
 
 // CREACION DE CHART***********************************************************************************************************************************************************
 
@@ -32,98 +53,4 @@ var myChart = new Chart(ctx, {
     }
 });
 
-
-
-// CREACIÓN DE AIR-DATEPICKERS***********************************************************************************************************************************************************
-
-let buttonHoy = {
-    content: 'Hoy',
-    className: 'custom-button-classname',
-    onClick: (dp) => {
-        let date = new Date();
-        dp.selectDate(date);
-        dp.setViewDate(date);
-    }
-}
-
-let buttonOK = {
-    content: 'Aceptar',
-    className: 'custom-button-classname',
-    onClick: (dp) => {
-        dp.hide()
-    }
-}
-var minValue;
-
-let dp1 = new AirDatepicker('#datepicker1', {
-    locale: {
-        days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-        daysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-        daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-        months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-        monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-        today: 'Hoy',
-        clear: 'Limpiar',
-        dateFormat: 'dd/MM/yyyy',
-        timeFormat: 'HH:mm',
-        firstDay: 1
-    },
-    buttons: [buttonHoy, buttonOK],
-    timepicker: true,
-    dateTimeSeparator: " - ",
-    isMobile: true,
-    onHide: () => {
-        fecha = datepicker1.value
-        const cadenaOriginal = fecha;
-        const partes = cadenaOriginal.split("/");
-        const nuevoOrden = [partes[1], partes[0], partes[2]];
-        const nuevaCadena = nuevoOrden.join("/");
-        minValue = nuevaCadena.split('-')[0]
-        dp2.update({
-            minDate: minValue
-        });
-        const dp2Input = document.querySelector('#datepicker2');
-        dp2Input.value = '';
-
-    }
-
-
-})
-
-
-let dp2 = new AirDatepicker('#datepicker2', {
-    locale: {
-        days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-        daysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-        daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-        months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-        monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-        clear: 'Limpiar',
-        dateFormat: 'dd/MM/yyyy',
-        timeFormat: 'HH:mm',
-        firstDay: 1
-    },
-    buttons: [buttonOK],
-    timepicker: true,
-    dateTimeSeparator: " - ",
-    isMobile: true,
-    onHide: () => {
-        const dp1Input = document.querySelector('#datepicker1');
-        const dp2Input = document.querySelector('#datepicker2');
-
-        const fechaInicio = dp1Input.value;
-        const fechaFinal = dp2Input.value;
-
-        const diaFinal = fechaFinal.split('-')[0];
-        const diaInicio = fechaInicio.split('-')[0];
-
-        const horaInicio = fechaInicio.split('-')[1];
-        const horaFinal = fechaFinal.split('-')[1];
-
-        if (diaInicio === diaFinal && horaFinal <= horaInicio) {
-            alert('La hora y minutos deben ser mayor que las del inicio');
-            dp2Input.value = ''
-        }
-   } 
-})
 

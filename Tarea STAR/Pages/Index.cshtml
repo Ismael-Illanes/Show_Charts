@@ -6,40 +6,107 @@
 <link rel="stylesheet" href="~/css/index.css" />
 
 
+
+
 <h1 class="display-4 my-5">Bienvenido</h1>
 
-
-
 <form method="post" id="myForm">
-<div id="CIndex" class="text-center container-fluid">
+<div id="CIndex">
 
-        <div id="calendars">
-<div class="calendar">
-    <label for="datepicker1"><h1>Fecha y hora inicial:</h1></label>
-    <input type="text" class="text-center w-100" name="fechaInicio" id="datepicker1" asp-for="@Model.FechaInicio" required autocomplete="off" />
-</div>
+        <div id="datePickerSection">
+            <div id="datePickerSectionInitial">
 
-            <div class="calendar">
-                <label for="datepicker2"><h1>Fecha y hora final:</h1></label>
-                <input type="text" class="text-center w-100" name="fechaFinal" id="datepicker2" asp-for="@Model.FechaFinal" required autocomplete="off" />
-
-            </div
-     
+                <h1>Fechas</h1>
+                <div class="datePickerSectionInitial_input">
+                    <div class="dateInfo">
+                        <label for="initDay"><h4>Fecha inicio:</h4></label>
+                        <input type="text" autocomplete="off" placeholder="dd/MM/yyyy" name="initDay" id="initDay" />
+                    </div>
+                    <div class="dateInfo">
+                    <label for="finalDay"><h4>Fecha final:</h4></label>
+                        <input type="text" autocomplete="off" placeholder="dd/MM/yyyy" name="finalDay" id="finalDay" />
+                    </div>
+                
+                </div>
+            </div>            
+            <div id="datePickerSectionFinal">
+                <h1>Horas</h1>
+                <div class="datePickerSectionInitial_input">
+                    <div class="dateInfo">
+                        <label for="initHour"><h4>Hora inicio:</h4></label>
+                        <input type="text" autocomplete="off" placeholder="HH:mm" name="initHour" id="initHour" />
+                    </div>
+                    <div class="dateInfo">
+                        <label for="finalHour"><h4>Hora final:</h4></label>
+                        <input type="text" autocomplete="off" placeholder="HH:mm" name="finalHour" id="finalHour" />
+                    </div>
+                </div>
+            </div>
        </div>
 
+<div class="selectionBox">
+    <h4>Agrupar por:</h4>
+            <div class="selectionBox_options">
+        <div class="selectionBox_options_input">
+            <input type="radio" id="group1" name="group" value="30">
+            <label for="group1">Días semana</label><br>
+        </div>
+                <div class="selectionBox_options_input">
+            <input type="radio" id="group2" name="group" value="30">
+            <label for="group2">Semanas</label><br>
+        </div>
+                <div class="selectionBox_options_input">
+            <input type="radio" id="group3" name="group" value="30">
+            <label for="group3">Meses</label><br>
+        </div>
+                <div class="selectionBox_options_input">
+            <input type="radio" id="group4" name="group" value="30">
+            <label for="group4">Años</label><br>
+        </div>        
+
+    
+    </div>
 </div>
-
-              <div id="controls">
-           <button type="submit" id="btnSubmit">MOSTRAR GRÁFICOS</button>
-           <select  aria-label="Default select example">
-            <option selected>Filtrar por:</option>
-            <option value="1">Dias semana</option>
-            <option value="2">Semanas</option>
-            <option value="3">Meses</option>
-            <option value="4">Años</option>
-        </select>
-       </div>
-
+        <div class="selectionBox">
+    <h4>Día a analizar:</h4>
+    <div class="selectionBox_options">
+                <div class="selectionBox_options_input">
+                    <input type="checkbox" id="checkAll" class="checker">
+                    <label for="checkAll">Todos</label><br>
+                </div>
+                <div class="selectionBox_options_input">
+                    <input type="checkbox" class="checker" id="day1">
+            <label for="day1">Lunes</label><br>
+        </div>                
+        <div class="selectionBox_options_input">
+                    <input type="checkbox" class="checker" id="day2">
+            <label for="day2">Martes</label><br>
+        </div>                
+        <div class="selectionBox_options_input">
+                    <input type="checkbox" class="checker" id="day3">
+                    <label for="day3">Miércoles</label><br>
+        </div>               
+        <div class="selectionBox_options_input">
+                    <input type="checkbox" class="checker" id="day4">
+                    <label for="day4">Jueves</label><br>
+        </div>                
+        <div class="selectionBox_options_input">
+                    <input type="checkbox" class="checker" id="day5">
+                    <label for="day5">Viernes</label><br>
+        </div>               
+        <div class="selectionBox_options_input">
+                    <input type="checkbox" class="checker" id="day6">
+                    <label for="day6">Sábado</label><br>
+        </div>                
+        <div class="selectionBox_options_input">
+                    <input type="checkbox" class="checker" id="day7">
+                    <label for="day7">Domingo</label><br>
+        </div>
+  
+    </div>
+</div>
+<button type="submit">Mostrar gráficos</button>
+</div>
        </form>
 
 
@@ -66,5 +133,4 @@ else
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.0/Chart.js"></script>
-<script src="~/js/air-datepicker.js"> </script>
 <script src="~/js/site.js"></script>
