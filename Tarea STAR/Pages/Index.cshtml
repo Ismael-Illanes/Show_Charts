@@ -8,9 +8,10 @@
 
 
 
-<h1 class="display-4 my-5">Bienvenido</h1>
 
-<form method="post" id="myForm">
+
+<form method="post" id="myForm" asp-page-handler="Index">
+
 <div id="CIndex">
 
         <div id="datePickerSection">
@@ -20,11 +21,12 @@
                 <div class="datePickerSectionInitial_input">
                     <div class="dateInfo">
                         <label for="initDay"><h4>Fecha inicio:</h4></label>
-                        <input type="text" autocomplete="off" placeholder="dd/MM/yyyy" name="initDay" id="initDay" />
+                        <input type="date" autocomplete="off" placeholder="dd/MM/yyyy" name="DiaInicio" id="initDay" asp-for="@Model.DiaInicio"/>
                     </div>
                     <div class="dateInfo">
                     <label for="finalDay"><h4>Fecha final:</h4></label>
-                        <input type="text" autocomplete="off" placeholder="dd/MM/yyyy" name="finalDay" id="finalDay" />
+                        <input type="date" autocomplete="off" placeholder="dd/MM/yyyy" name="DiaFinal" id="finalDay" asp-for="@Model.DiaFinal" disabled="true" />
+
                     </div>
                 
                 </div>
@@ -34,11 +36,11 @@
                 <div class="datePickerSectionInitial_input">
                     <div class="dateInfo">
                         <label for="initHour"><h4>Hora inicio:</h4></label>
-                        <input type="text" autocomplete="off" placeholder="HH:mm" name="initHour" id="initHour" />
+                        <input type="time" autocomplete="off" placeholder="HH:mm" name="HoraInicio"  asp-for="@Model.HoraInicio" id="initHour" />
                     </div>
                     <div class="dateInfo">
                         <label for="finalHour"><h4>Hora final:</h4></label>
-                        <input type="text" autocomplete="off" placeholder="HH:mm" name="finalHour" id="finalHour" />
+                        <input type="time" autocomplete="off" placeholder="HH:mm"  name="HoraFinal" asp-for="@Model.HoraFinal" id="finalHour" />
                     </div>
                 </div>
             </div>
@@ -109,28 +111,80 @@
 </div>
        </form>
 
-
-
-    @if (Model.Ventas != null)
-{    <p>Mostrando @Model.Ventas.Count() registros. <br /> 
-        Desde (@Model.FechaInicio @Model.HoraInicio) hasta (@Model.FechaFinal @Model.HoraFinal). </p>
-    <br />
-    <h1>@Model.Ventas.Count()</h1>
-}
-else
+@if (Model.Ventas != null)
 {
-    <p>No se encontraron ventas para las fechas especificadas.</p>
-}
-<h1>Gráfico de ventas</h1>
-    <div class="d-flex">
-    <canvas id="myChart"></canvas>
+    <h1>Gráficos</h1>
+    <div id="Charts">
+        @{
+            List<string> fechasUnicas = Model.Ventas.Select(item => item.DiaInicio.ToString().Substring(0, 10)).Distinct().ToList();
+        }
+        @foreach (var fecha in fechasUnicas)
+        {
+            var horas = new List<string>();
+            var importes = new List<double>();
+            foreach (var item in Model.Ventas.Where(v => v.DiaInicio.ToString().Substring(0, 10) == fecha))
+            {
+                horas.Add(item.Hora.ToString());
+                importes.Add(item.Importe ?? 0.0);
+            }
+            var fechaDateTime = DateTime.Parse(fecha);
+            var diaSemana = fechaDateTime.ToString("dddd");
+            var totalRecaudado = importes.Sum();
+            <canvas style="border:1px dotted black; border-radius:1rem; width:100%" id="@fecha"></canvas>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.0/Chart.js"></script>
+            <script>
+                var ctx = document.getElementById("@fecha").getContext("2d");
+                var horasArray = @Html.Raw(Json.Serialize(horas));
+                var importesArray = @Html.Raw(Json.Serialize(importes));
+                var totalRecaudado = @Html.Raw(Json.Serialize(totalRecaudado));
+
+                var colors = [];
+                for (var i = 0; i < horasArray.length; i++) {
+                    var color = 'rgba(' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ',0.5)';
+                    colors.push(color);
+                }
+
+                var myChart = new Chart(ctx, {
+                    type: "bar",
+                    data: {
+                        labels: horasArray,
+                        datasets: [{
+                            label: 'Día @diaSemana - @fecha.Split(' ')[0] - Recaudación total: ' + totalRecaudado.toFixed(2)+'€',
+                            data: importesArray,
+                            backgroundColor: colors
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scaleShowValues: true,
+                        scales: {
+                            xAxes: [{
+                                stacked: false,
+                                beginAtZero: true,
+                                scaleLabel: {
+                                    labelString: 'Month'
+                                },
+                                ticks: {
+                                    stepSize: 1,
+                                    min: 0,
+                                    autoSkip: false
+                                }
+                            }]
+                        }
+                    }
+                });
+            </script>
+        }
     </div>
+}
 
 
 
 
-     
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.0/Chart.js"></script>
-<script src="~/js/site.js"></script>
+
+
+
+
+<script defer src="~/js/site.js"></script>

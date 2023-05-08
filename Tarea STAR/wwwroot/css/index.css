@@ -1,4 +1,10 @@
 
+
+#myForm{
+   display:flex;
+   justify-content:center;
+}
+
 html {
   font-size: 14px;
 }
@@ -22,7 +28,7 @@ body {
     display:flex;
     flex-direction:column;
     align-items:center;
-    width:100%;
+    width:100vw;
 }
 
 #CIndex {
@@ -31,9 +37,8 @@ body {
     padding: 10px;
     border: 1px dotted #243119;
     width: 100%;
-    max-width: fit-content;
     min-width: 375px;
-    margin: auto;
+    margin: 0;
     border-radius: 1rem;
 }
 
@@ -42,7 +47,7 @@ body {
     justify-content:space-evenly;
     height: fit-content;
     gap: 10px;
-    padding: 10px;
+    margin-bottom:10px;
 }
 
 #datePickerSectionInitial {
@@ -53,6 +58,7 @@ body {
     border-radius: 1rem;
     background-color: #C9F2C7;
     padding: 10px;
+    width:100%;
 }
 
 #datePickerSectionFinal {
@@ -63,6 +69,7 @@ body {
     background-color: #C9F2C7;
     border-radius: 1rem;
     padding: 10px;
+    width: 100%;
 }
 
     .dateInfo {
@@ -161,7 +168,7 @@ input{
     display: flex;
 }
     .selectionBox_options_input input {
-        margin-right: 10px;
+        margin-right: 5px;
     }
 
 
@@ -177,6 +184,8 @@ input{
 }
 
 
+
+
 @media(max-width: 500px){
 .dateInfo{
     flex-direction:column;
@@ -187,35 +196,13 @@ input{
 }
 
 
-input[type='radio']:checked:after {
-    width: 15px;
-    height: 15px;
-    border-radius: 15px;
-    top: 7px;
-    left: -1px;
-    position: relative;
-    background-color: #243119;
-    content: '';
-    display: inline-block;
-    visibility: visible;
-    border: 2px solid white
-}
-
-input[type='checkbox']:checked:after {
-    width: 15px;
-    height: 15px;
-    top: 7px;
-    left: -1px;
-    position: relative;
-    background-color: #243119;
-    content: '';
-    display: inline-block;
-    visibility: visible;
-    border: 2px solid white
-}
-
 button {
     background-color: #243119;
     color:beige;
     border-radius:1rem;
+}
+
+#Charts {
+width:100%;
+padding:10px;
 }
