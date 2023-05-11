@@ -3,16 +3,31 @@
 @{
     ViewData["Title"] = "Home page";
 }
+@using Tarea_STAR.Helpers;
 <link rel="stylesheet" href="~/css/index.css" />
-
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
 
 
 
 
 <form method="post" id="myForm" asp-page-handler="Index">
+    
+
 
 <div id="CIndex">
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+
 
         <div id="datePickerSection">
             <div id="datePickerSectionInitial">
@@ -21,12 +36,12 @@
                 <div class="datePickerSectionInitial_input">
                     <div class="dateInfo">
                         <label for="initDay"><h4>Fecha inicio:</h4></label>
-                        <input type="date" autocomplete="off" placeholder="dd/MM/yyyy" name="DiaInicio" id="initDay" asp-for="@Model.DiaInicio"/>
+                        <input type="date" autocomplete="off" placeholder="dd/MM/yyyy" name="DiaInicio" id="initDay" asp-for="@Model.DiaInicio" value="@Model.DiaInicio"/>
                     </div>
                     <div class="dateInfo">
                     <label for="finalDay"><h4>Fecha final:</h4></label>
-                        <input type="date" autocomplete="off" placeholder="dd/MM/yyyy" name="DiaFinal" id="finalDay" asp-for="@Model.DiaFinal" disabled="true" />
-
+                        <input type="date" autocomplete="off" placeholder="dd/MM/yyyy" name="DiaFinal" id="finalDay" asp-for="@Model.DiaFinal" value="@Model.DiaFinal" />
+                        <br />
                     </div>
                 
                 </div>
@@ -73,118 +88,138 @@
     <h4>Día a analizar:</h4>
     <div class="selectionBox_options">
                 <div class="selectionBox_options_input">
-                    <input type="checkbox" id="checkAll" class="checker">
-                    <label for="checkAll">Todos</label><br>
-                </div>
-                <div class="selectionBox_options_input">
-                    <input type="checkbox" class="checker" id="day1">
+                    <input type="checkbox" name="DiasSeleccionados" class="checker" value="lunes"  id="day1">
             <label for="day1">Lunes</label><br>
         </div>                
         <div class="selectionBox_options_input">
-                    <input type="checkbox" class="checker" id="day2">
+                    <input type="checkbox" name="DiasSeleccionados" class="checker" value="martes" id="day2">
             <label for="day2">Martes</label><br>
         </div>                
         <div class="selectionBox_options_input">
-                    <input type="checkbox" class="checker" id="day3">
+                    <input type="checkbox" name="DiasSeleccionados" class="checker" value="miercoles" id="day3">
                     <label for="day3">Miércoles</label><br>
         </div>               
         <div class="selectionBox_options_input">
-                    <input type="checkbox" class="checker" id="day4">
+                    <input type="checkbox" name="DiasSeleccionados" class="checker" value="jueves" id="day4">
                     <label for="day4">Jueves</label><br>
         </div>                
         <div class="selectionBox_options_input">
-                    <input type="checkbox" class="checker" id="day5">
+                    <input type="checkbox" name="DiasSeleccionados" class="checker" value="viernes" id="day5">
                     <label for="day5">Viernes</label><br>
         </div>               
         <div class="selectionBox_options_input">
-                    <input type="checkbox" class="checker" id="day6">
+                    <input type="checkbox" name="DiasSeleccionados" class="checker" value="sabado" id="day6">
                     <label for="day6">Sábado</label><br>
         </div>                
         <div class="selectionBox_options_input">
-                    <input type="checkbox" class="checker" id="day7">
+                    <input type="checkbox" name="DiasSeleccionados" class="checker" value="domingo"  id="day7">
                     <label for="day7">Domingo</label><br>
         </div>
   
     </div>
 </div>
-<button type="submit">Mostrar gráficos</button>
-</div>
+<button id="btnChart" type="submit">Mostrar gráficos</button>
        </form>
+
 
 @if (Model.Ventas != null)
 {
     <h1>Gráficos</h1>
-    <div id="Charts">
-        @{
-            List<string> fechasUnicas = Model.Ventas.Select(item => item.DiaInicio.ToString().Substring(0, 10)).Distinct().ToList();
-        }
-        @foreach (var fecha in fechasUnicas)
+    <div id="Charts" class="flex">
+    
+        @foreach (var fecha in Model.FechasUnicas)
         {
             var horas = new List<string>();
             var importes = new List<double>();
-            foreach (var item in Model.Ventas.Where(v => v.DiaInicio.ToString().Substring(0, 10) == fecha))
+            foreach (var item in Model.Ventas.Where(v => v.Fecha.HasValue && v.Fecha.Value.Date.ToString("dd-MM-yyyy") == fecha))
             {
                 horas.Add(item.Hora.ToString());
                 importes.Add(item.Importe ?? 0.0);
             }
-            var fechaDateTime = DateTime.Parse(fecha);
-            var diaSemana = fechaDateTime.ToString("dddd");
-            var totalRecaudado = importes.Sum();
-            <canvas style="border:1px dotted black; border-radius:1rem; width:100%" id="@fecha"></canvas>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.0/Chart.js"></script>
-            <script>
-                var ctx = document.getElementById("@fecha").getContext("2d");
-                var horasArray = @Html.Raw(Json.Serialize(horas));
-                var importesArray = @Html.Raw(Json.Serialize(importes));
-                var totalRecaudado = @Html.Raw(Json.Serialize(totalRecaudado));
+            if (!string.IsNullOrEmpty(fecha))
+            {
+                var fechaDateTime = DateTime.Parse(fecha);
+                var diaSemana = fechaDateTime.ToString("dddd");
+                diaSemana = Tarea_STAR.Helpers.RemoveAccentsHelper.RemoveDiacritics(diaSemana);
+                var totalRecaudado = importes.Sum();
 
-                var colors = [];
-                for (var i = 0; i < horasArray.length; i++) {
-                    var color = 'rgba(' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ',0.5)';
-                    colors.push(color);
-                }
+                <canvas id="@fecha"></canvas>
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.0/Chart.js"></script>
+                <script>
 
-                var myChart = new Chart(ctx, {
-                    type: "bar",
-                    data: {
-                        labels: horasArray,
-                        datasets: [{
-                            label: 'Día @diaSemana - @fecha.Split(' ')[0] - Recaudación total: ' + totalRecaudado.toFixed(2)+'€',
-                            data: importesArray,
-                            backgroundColor: colors
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scaleShowValues: true,
-                        scales: {
-                            xAxes: [{
-                                stacked: false,
-                                beginAtZero: true,
-                                scaleLabel: {
-                                    labelString: 'Month'
-                                },
-                                ticks: {
-                                    stepSize: 1,
-                                    min: 0,
-                                    autoSkip: false
-                                }
-                            }]
-                        }
+                    var ctx = document.getElementById("@fecha").getContext("2d");
+                    var horasArray = @Html.Raw(Json.Serialize(horas));
+                    horasArray.sort();
+                    var importesArray = @Html.Raw(Json.Serialize(importes));
+                    var totalRecaudado = @Html.Raw(Json.Serialize(totalRecaudado));
+
+                    var colors = [];
+                    for (var i = 0; i < horasArray.length; i++) {
+                        var color = 'rgba(' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ',' + Math.floor(Math.random() * 256) + ',0.5)';
+                        colors.push(color);
                     }
-                });
-            </script>
+                   
+                    var myChart = new Chart(ctx, {
+                        type: "bar",
+                        data: {
+                            labels: horasArray,
+                            datasets: [{
+                                label:  '@diaSemana - @fecha - Recaudación total: ' + totalRecaudado.toFixed(2) + '€',
+                                data: importesArray,
+                                backgroundColor: colors
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scaleShowValues: true,
+                            scales: {
+                                xAxes: [{
+                                    stacked: false,
+                                    beginAtZero: true,
+                                    scaleLabel: {
+                                        labelString: 'Month'
+                                    },
+                                    ticks: {
+                                        stepSize: 1,
+                                        min: 0,
+                                        autoSkip: false
+                                    }
+                                }],
+                                yAxes: [{
+                                    ticks: {
+                                        callback: function (value, index, values) {
+                                            return value.toFixed(2) + '€';
+                                        }
+                                    }
+                                }]
+                            },
+                            tooltips: {
+                                callbacks: {
+                                    label: function (tooltipItem, data) {
+                                        var value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                                        return value.toFixed(2) + '€';
+                                    }
+                                }
+                            }
+                        }
+                    });
+                </script>
+            }
         }
     </div>
 }
+else
+{
+    <h3>No se encontraron datos para este día.</h3>
+}
 
 
+<div id="progress">
+    <span id="progress-value">
+        <span class="material-symbols-outlined">
+            arrow_upward
+        </span>
+    </span>
+</div>
 
-
-
-
-
-
-
-
-<script defer src="~/js/site.js"></script>
+</div>

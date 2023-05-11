@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Tarea_STAR.Data;
 using Tarea_STAR.Model;
 using System.Globalization;
+using System.Text;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Tarea_STAR.Helpers;
 
 public class IndexModel : PageModel
 {
@@ -10,13 +14,21 @@ public class IndexModel : PageModel
     private readonly AppDBContext _dbContext;
     public IEnumerable<Ventas> Ventas { get; set; }
     [BindProperty]
+    [Required(ErrorMessage = "Se requiere una fecha inicial")]
     public string DiaInicio { get; set; }
     [BindProperty]
+    [Required(ErrorMessage = "Se requiere una fecha final")]
     public string DiaFinal { get; set; }
     [BindProperty]
+    [Required(ErrorMessage = "Se requiere una hora inicial")]
     public string HoraInicio { get; set; }
     [BindProperty]
+    [Required(ErrorMessage = "Se requiere una hora final")]
     public string HoraFinal { get; set; }
+    [BindProperty]
+
+    public List<string> FechasUnicas { get; set; } 
+
     public IndexModel(ILogger<IndexModel> logger, AppDBContext dbContext)
     {
 
@@ -24,44 +36,53 @@ public class IndexModel : PageModel
         _dbContext = dbContext;
     }
 
+
+
     public void OnGet()
     {
-
+       
     }
-
-    //public DateTime formateo(DateTime x)
-    //{
-        
-    //    var y = x.ToString();
-    //    var partes = y.Split(' ')[0];
-    //    DateTime fecha = DateTime.ParseExact(partes, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-    //    return fecha;
-    //}
-
 
     public IActionResult OnPost()
     {
-        DateTime fechaInicial = DateTime.ParseExact(DiaInicio, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-        string fechaFormateada1 = fechaInicial.ToString("dd/MM/yyyy");
-        DateTime diaInicio = DateTime.ParseExact(fechaFormateada1, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+        if (string.IsNullOrEmpty(DiaInicio) || string.IsNullOrEmpty(DiaFinal) || string.IsNullOrEmpty(HoraInicio) || string.IsNullOrEmpty(HoraFinal))
+        {
+            ModelState.AddModelError(string.Empty, "Todos los campos deben ser completados.");
+            return Page();
+        }
 
-        DateTime fechaFinal = DateTime.ParseExact(DiaFinal, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-        string fechaFormateada2 = fechaFinal.ToString("dd/MM/yyyy");
-        DateTime diaFinal = DateTime.ParseExact(fechaFormateada2, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+        DateTime fechaInicial, fechaFinal;
+        if (!DateTime.TryParseExact(DiaInicio, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out fechaInicial)
+            || !DateTime.TryParseExact(DiaFinal, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out fechaFinal))
+        {
+            ModelState.AddModelError(string.Empty, "Formato de fecha incorrecto.");
+            return Page();
+        }
 
-        TimeSpan horaInicio = TimeSpan.ParseExact(HoraInicio, "hh\\:mm", CultureInfo.InvariantCulture);
-        TimeSpan horaFinal = TimeSpan.ParseExact(HoraFinal, "hh\\:mm", CultureInfo.InvariantCulture);
+        DateTime diaInicio = fechaInicial.Date;
+        DateTime diaFinal = fechaFinal.Date;
 
+        TimeSpan horaInicio, horaFinal;
+        if (!TimeSpan.TryParseExact(HoraInicio, "hh\\:mm", CultureInfo.InvariantCulture, out horaInicio)
+            || !TimeSpan.TryParseExact(HoraFinal, "hh\\:mm", CultureInfo.InvariantCulture, out horaFinal))
+        {
+            ModelState.AddModelError(string.Empty, "Formato de hora incorrecto.");
+            return Page();
+        }
 
-        
 
         Ventas = _dbContext.Ventas
-            .Where(v => v.Fecha >= diaInicio && v.Fecha <= diaFinal && v.Hora >= horaInicio && v.Hora <= horaFinal)
-        .OrderBy(v => v.Fecha)
-        .ThenBy(v => v.Hora);
+                .Where(v => v.Fecha >= diaInicio && v.Fecha <= diaFinal && v.Hora >= horaInicio && v.Hora <= horaFinal)
+                .OrderBy(v => v.Fecha)
+                .ThenBy(v => v.Hora);
 
 
+        this.FechasUnicas = Ventas.Select(item => item.Fecha.HasValue ? item.Fecha.Value.Date.ToString("dd-MM-yyyy") : "").Distinct().ToList();
         return Page();
     }
 
+
 }
+
+
+

@@ -1,20 +1,25 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden; /* Evita el scroll horizontal */
+}
 
-
-#myForm{
-   display:flex;
-   justify-content:center;
+#myForm {
+    display: flex;
+    justify-content: center;
 }
 
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
-
 
 html {
     position: relative;
@@ -25,10 +30,11 @@ body {
     margin-bottom: 60px;
     color: #161F2A;
     background-color: #C9F2C7;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    width:100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    overflow-x: hidden; /* Evita el scroll horizontal */
 }
 
 #CIndex {
@@ -44,10 +50,10 @@ body {
 
 #datePickerSection {
     display: flex;
-    justify-content:space-evenly;
+    justify-content: space-evenly;
     height: fit-content;
     gap: 10px;
-    margin-bottom:10px;
+    margin-bottom: 10px;
 }
 
 #datePickerSectionInitial {
@@ -58,7 +64,7 @@ body {
     border-radius: 1rem;
     background-color: #C9F2C7;
     padding: 10px;
-    width:100%;
+    width: 100%;
 }
 
 #datePickerSectionFinal {
@@ -72,40 +78,39 @@ body {
     width: 100%;
 }
 
-    .dateInfo {
-        display: flex;
-        justify-content: space-evenly;
-        margin: 10px;
-        width: 100%;
-    }
-
-.dateInfo input{
-    text-align:center;
-    padding:0.1rem;
-    font-size:20px;
-    font-weight:bold;
+.dateInfo {
+    display: flex;
+    justify-content: space-evenly;
+    margin: 10px;
+    width: 100%;
 }
 
+    .dateInfo input {
+        text-align: center;
+        padding: 0.1rem;
+        font-size: 20px;
+        font-weight: bold;
+    }
 
 @media (max-width: 900px) {
     #datePickerSection {
         display: block;
     }
-    #CIndex{
-        width:100%;
+
+    #CIndex {
+        width: 100%;
     }
+
     #datePickerSectionInitial {
-        margin-bottom:10px;
+        margin-bottom: 10px;
     }
 }
 
-
-
-
-.datePickerSectionInitial_input{
-    display:flex;
-    flex-direction:column;
+.datePickerSectionInitial_input {
+    display: flex;
+    flex-direction: column;
 }
+
 
 button {
     background-color: beige;
@@ -113,35 +118,32 @@ button {
     border-radius: 10%;
 }
 
-
 #firstSection {
     display: grid;
     align-content: space-between;
     height: 100%;
     width: 100%;
-    padding:10px;
+    padding: 10px;
 }
 
-
-input{
-    outline:none;
-    border:none;
-    border-radius:1rem;
+input {
+    outline: none;
+    border: none;
+    border-radius: 1rem;
 }
 
-#controls{
-    display:flex;
+#controls {
+    display: flex;
 }
-
 
 #btnSubmit {
     background-color: #243119;
     color: beige;
-    border-radius:1rem;
-    width:100%;
-    height:100px;
-    font-size:30px;
-    font-weight:bolder;
+    border-radius: 1rem;
+    width: 100%;
+    height: 100px;
+    font-size: 30px;
+    font-weight: bolder;
 }
 
 .selectionBox {
@@ -149,28 +151,28 @@ input{
     display: flex;
     padding: 10px;
     border-radius: 1rem;
-    margin-bottom:10px;
+    margin-bottom: 10px;
 }
 
-.selectionBox_options{
-    display:flex;
-    justify-content:space-around;
-    margin-left:50px;
-    flex-grow:1;
+.selectionBox_options {
+    display: flex;
+    justify-content: space-around;
+    margin-left: 50px;
+    flex-grow: 1;
 }
 
-.selectionBox_options label{
-    display:flex;
-    align-items:center;
-}
+    .selectionBox_options label {
+        display: flex;
+        align-items: center;
+    }
 
 .selectionBox_options_input {
     display: flex;
 }
+
     .selectionBox_options_input input {
         margin-right: 5px;
     }
-
 
 @media (max-width: 795px) {
     .selectionBox_options {
@@ -183,26 +185,46 @@ input{
         }
 }
 
+@media (max-width: 500px) {
+    .dateInfo {
+        flex-direction: column;
+    }
 
-
-
-@media(max-width: 500px){
-.dateInfo{
-    flex-direction:column;
+    .selectionBox {
+        flex-direction: column;
+    }
 }
-.selectionBox{
-    flex-direction:column;
-}
-}
-
 
 button {
     background-color: #243119;
-    color:beige;
-    border-radius:1rem;
+    color: beige;
+    border-radius: 1rem;
+}
+
+@media (max-width: 590px) {
+    #Charts.flex {
+        display: flex;
+        width:100%;
+        flex-direction: column;
+    }
+
 }
 
 #Charts {
-width:100%;
-padding:10px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(490px, 1fr));
+    grid-gap: 10px;
+    padding: 1rem;
 }
+
+    #Charts.flex canvas {
+        margin: auto;
+        border: 1px dotted black;
+        border-radius: 1rem;
+        margin-bottom: 1rem;
+        background-color: azure;
+        width: 100%;
+        height: 100%;
+        max-width: 500px;
+        max-height: 350px;
+    }

@@ -1,78 +1,51 @@
-﻿// OBTENCIÓN DE ELEMENTOS BODY
+﻿$(document).ready(function () {
+    const initDay = $('#initDay');
+    const finalDay = $('#finalDay');
+    const initHour = $('#initHour');
+	const finalHour = $('#finalHour');
 
-const checkBoxes = document.querySelectorAll('.checker');
-const initDay = document.querySelector('#initDay');
-const finalDay = document.querySelector('#finalDay');
-const initHour = document.querySelector('#initHour');
-const finalHour = document.querySelector('#finalHour');
 
-function checkAllCheckBoxes() {
-    if (checkBoxes[0].checked) {
-        for (let i = 1; i < checkBoxes.length; i++) {
-            checkBoxes[i].checked = true
+
+
+    initDay.on('input', function () {
+        if (initDay.val().length === 0) {
+            finalDay.prop('disabled', true);
+        } else {
+            finalDay.prop('disabled', false);
         }
-    } else {
-        for (let i = 1; i < checkBoxes.length; i++) {
-            checkBoxes[i].checked = false
+    });
+
+    initHour.on('input', function () {
+        finalHour.attr('min', initHour.val());
+    });
+
+    finalDay.on('click', function () {
+        finalDay.attr('min', initDay.val());
+    });
+
+// FUNCTION Scroll Arrow with Progress Bar
+
+    const calcScrollValue = () => {
+        const scrollProgress = $("#progress");
+        const progressValue = $("#progress-value");
+        const pos = $(document).scrollTop();
+        const calcHeight =
+            $(document).height() - $(window).height();
+        const scrollValue = Math.round((pos * 100) / calcHeight);
+        if (pos > 100) {
+            scrollProgress.css('display', 'grid');
+        } else {
+            scrollProgress.css('display', 'none');
         }
-    }
-};
+        scrollProgress.on("click", () => {
+            $(document).scrollTop(0);
+        });
+        scrollProgress.css('background', `conic-gradient(#243119 ${scrollValue}%, #d7d7d7 ${scrollValue}%)`);
+    };
 
-initDay.addEventListener('click', function () {
-    finalDay.value = '';
-})
-
-
-initDay.addEventListener('input', function () {
-    if (initDay.value.length === 0) {
-        finalDay.disabled = true;
-    } else {
-        finalDay.disabled = false;
-    }
-})
-
-initHour.addEventListener('input', function () {
-    finalHour.min = initHour.value;
-})
-
-finalDay.addEventListener('click', function () {
-    finalDay.min = initDay.value;
+    $(window).scroll(calcScrollValue);
+    $(window).on('load', calcScrollValue);
 });
 
-
-checkBoxes[0].addEventListener('click', checkAllCheckBoxes)
-
-
-
-
-
-// CREACION DE CHART***********************************************************************************************************************************************************
-
-//var ctx = document.querySelector(".Chart").getContext("2d");
-//var myChart = new Chart(ctx, {
-//    type: "bar",
-//    data: {
-//        labels: ['@item.Fecha'],
-//        datasets: [{
-//            label: ['Datos'],
-//            data: [10, 9, 15],
-//            backgroundColor: [
-//                'rgb(66, 134, 244,0.5)',
-//                'rgb(74, 135, 72,0.5)',
-//                'rgb(229, 89, 50,0.5)'
-//            ]
-//        }]
-//    },
-//    options: {
-//        responsive: false,
-//        scales: {
-//            yAxes: [{
-//                ticks: {
-//                    beginAtZero: true
-//                }
-//            }]
-//        }
-//    }
-//});
-
+ // FUNCTION CLICK ON DIV AND FULLSCREEN EXPANDING
 
