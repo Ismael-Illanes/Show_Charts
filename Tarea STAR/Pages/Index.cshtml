@@ -32,10 +32,10 @@
         <div id="datePickerSection">
             <div id="datePickerSectionInitial">
 
-                <h1>Fechas</h1>
+               
                 <div class="datePickerSectionInitial_input">
                     <div class="dateInfo">
-                        <label for="initDay"><h4>Fecha inicio:</h4></label>
+                        <label for="initDay"><h4>Fecha inicio</h4></label>
                         <input type="date" autocomplete="off" placeholder="dd/MM/yyyy" name="DiaInicio" id="initDay" asp-for="@Model.DiaInicio" value="@Model.DiaInicio"/>
                     </div>
                     <div class="dateInfo">
@@ -47,10 +47,10 @@
                 </div>
             </div>            
             <div id="datePickerSectionFinal">
-                <h1>Horas</h1>
+               
                 <div class="datePickerSectionInitial_input">
                     <div class="dateInfo">
-                        <label for="initHour"><h4>Hora inicio:</h4></label>
+                        <label for="initHour"><h4>Hora inicio</h4></label>
                         <input type="time" autocomplete="off" placeholder="HH:mm" name="HoraInicio"  asp-for="@Model.HoraInicio" id="initHour" />
                     </div>
                     <div class="dateInfo">
@@ -120,7 +120,6 @@
 </div>
 <button id="btnChart" type="submit">Mostrar gráficos</button>
        </form>
-
 
 @if (Model.Ventas != null)
 {

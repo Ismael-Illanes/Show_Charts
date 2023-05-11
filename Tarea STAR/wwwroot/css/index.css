@@ -80,6 +80,7 @@ body {
 
 .dateInfo {
     display: flex;
+    flex-direction:column;
     justify-content: space-evenly;
     margin: 10px;
     width: 100%;

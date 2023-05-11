@@ -49,3 +49,22 @@
 
  // FUNCTION CLICK ON DIV AND FULLSCREEN EXPANDING
 
+var isFullscreen = false;
+
+function fullscreen() {
+    var d = {};
+    var speed = 300;
+    if (!isFullscreen) { 
+        d.width = "100%";
+        d.height = "100%";
+        isFullscreen = true;
+        $("h1").slideUp(speed);
+    }
+    else {           
+        d.width = "300px";
+        d.height = "100px";
+        isFullscreen = false;
+        $("h1").slideDown(speed);
+    }
+    $("#controls").animate(d, speed);
+}
