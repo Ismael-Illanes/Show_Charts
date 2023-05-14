@@ -89,8 +89,8 @@
             <h4>Día a analizar:</h4>
             <div class="selectionBox_options">
                 <div class="selectionBox_options_input">
-                    <input type="checkbox" name="SelectedDays" class="checker" value="0" id="0" @(Model.SelectedDays != null && Model.SelectedDays.Contains("0") ? "checked" : "")>
-                    <label for="0">Todos</label><br>
+                    <input type="checkbox" name="SelectedDays" class="checker" value="all" id="all" @(Model.SelectedDays != null && Model.SelectedDays.Contains("all") ? "checked" : "")>
+                    <label for="all">Todos</label><br>
                 </div>
                 <div class="selectionBox_options_input">
                     <input type="checkbox" name="SelectedDays" class="checker" value="1" id="day1" @(Model.SelectedDays != null && Model.SelectedDays.Contains("1") ? "checked" : "")>
@@ -117,8 +117,8 @@
                     <label for="day6">Sábado</label><br>
                 </div>
                 <div class="selectionBox_options_input">
-                    <input type="checkbox" name="SelectedDays" class="checker" value="7" id="day7" @(Model.SelectedDays != null && Model.SelectedDays.Contains("7") ? "checked" : "")>
-                    <label for="day7">Domingo</label><br>
+                    <input type="checkbox" name="SelectedDays" class="checker" value="0" id="day0" @(Model.SelectedDays != null && Model.SelectedDays.Contains("0") ? "checked" : "")>
+                    <label for="0">Domingo</label><br>
                 </div>
 
 
@@ -129,29 +129,34 @@
 
 <div id="Charts">
 
-    @if (Model.GroupBy == "dw" && Model.SelectedDays.Contains("0"))
+    @if (Model.Ventas != null)
     {
-     
-        int chartsAmount = 7;
-        string[] arr = { "Chart1", "Chart2", "Chart3", "Chart4", "Chart5", "Chart6", "Chart7"};  
-        
+        @if(Model.GroupBy == "dw")
+        {   
+        int chartsAmount = Model.ListaVentasPorDia.Count();
+        string[] arr = new string[chartsAmount];
+
+        for (var i = 0; i < chartsAmount; i++)
+        {
+            string c = "Chart" + i;
+            arr[i] = c;
+        }
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
         for (var i = 0; i < chartsAmount; i++)
         {
             <canvas id='@arr[i]'></canvas>
             <script>
+       document.getElementById("Charts").style.display = "grid";
                 var ventasPorDia = @Html.Raw(Json.Serialize(Model.ListaVentasPorDia[i].Select(item => item.Importe)));
                 var labels = @Html.Raw(Json.Serialize(Model.ListaVentasPorDia[i].Select(item => item.Fecha)));
                 var dayNames = @Html.Raw(Json.Serialize(Model.ListaVentasPorDia[i].Select(item => CultureInfo.GetCultureInfo("es-ES").DateTimeFormat.GetDayName(item.DayOfWeek))));
-
-                const @arr[i] = document.getElementById('@arr[i]');
 
                 var maxIndex = ventasPorDia.indexOf(Math.max(...ventasPorDia));
                 var minIndex = ventasPorDia.indexOf(Math.min(...ventasPorDia));
 
                 var importeTotal = ventasPorDia.reduce((a, b) => a + b, 0);
-          
+
                 new Chart(@arr[i], {
                     type: 'bar',
                     data: {
@@ -198,13 +203,25 @@
                         }
                     }
                 });
-            </script>
+                </script>
+
+            }
+        } else if(Model.GroupBy == "w")
+        {
+            @foreach (var semana in Model.ListaVentasPorSemana)
+            {
+                <h3>Semana @semana[0].WeekNumber</h3>
+                <ul>
+                    @foreach (var fechaVenta in semana)
+                    {
+                        <li>@fechaVenta.Fecha - Importe: @fechaVenta.Importe</li>
+                    }
+                </ul>
+            }
 
         }
-    }else if(Model.GroupBy == "dw" && !Model.SelectedDays.Contains("0"))
-    {
-        
     }
+
 
 </div>
 
@@ -217,46 +234,6 @@
 </div>
 
 *@
-
-
-@*
-@if (Model.SelectedDays.Contains("0"))
-{
-    @foreach (var item in Model.VentasPorDias)
-    {
-        <p>@item.Fecha (@CultureInfo.GetCultureInfo("es-ES").DateTimeFormat.GetDayName(item.DayOfWeek)) @string.Format("{0:N2}", item.Importe)</p>
-    }
-}
-else if (Model.VentasPorDias != null)
-{
-    var selectedDays = Model.SelectedDays.Where(day => day != "7").Select(day => (DayOfWeek)int.Parse(day)).ToList();
-    var showSunday = Model.SelectedDays.Contains("7");
-
-    foreach (var day in selectedDays)
-    {
-        var ventasPorDia = Model.VentasPorDias.Where(item => item.DayOfWeek == day).ToList();
-
-        <h2>@CultureInfo.GetCultureInfo("es-ES").DateTimeFormat.GetDayName(day)</h2>
-        @foreach (var item in ventasPorDia)
-        {
-            <p>@item.Fecha (@CultureInfo.GetCultureInfo("es-ES").DateTimeFormat.GetDayName(item.DayOfWeek)) @string.Format("{0:N2}", item.Importe)</p>
-        }
-    }
-
-    if (showSunday)
-    {
-        var ventasDomingo = Model.VentasPorDias.Where(item => item.DayOfWeek == DayOfWeek.Sunday).ToList();
-
-        <h2>@CultureInfo.GetCultureInfo("es-ES").DateTimeFormat.GetDayName(DayOfWeek.Sunday)</h2>
-        @foreach (var item in ventasDomingo)
-        {
-            <p>@item.Fecha (@CultureInfo.GetCultureInfo("es-ES").DateTimeFormat.GetDayName(item.DayOfWeek)) @string.Format("{0:N2}", item.Importe)</p>
-        }
-    }
-}
-*@
-
-
 
 
 

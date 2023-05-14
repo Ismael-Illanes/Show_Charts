@@ -50,16 +50,18 @@ public class IndexModel : PageModel
     public List<VentaPorDias> Sabado { get; set; }
     public List<VentaPorDias> Domingo { get; set; }
 
+    public List<VentaPorDias> VentasPorSemanas { get; set; }
     public List<VentaPorDias> VentasPorDias { get; set; }
-
     public List<List<VentaPorDias>> ListaVentasPorDia { get; set; }
+    public List<List<VentaPorDias>> ListaVentasPorSemana { get; set; }
+
     public IndexModel(ILogger<IndexModel> logger, AppDBContext dbContext)
     {
         _logger = logger;
         _dbContext = dbContext;
     }
 
-   
+
 
 
     public void OnGet()
@@ -137,9 +139,14 @@ public class IndexModel : PageModel
 
 
 
+// OBTENCIÓN FECHAS ÚNICAS (POR CADA HORA ME GENERABA UNA FECHA REPETIDA)
+
         this.FechasUnicas = Ventas.Select(item => item.Fecha.HasValue ? item.Fecha.Value.Date.ToString("dd-MM-yyyy") : "").Distinct().ToList();
 
         List<VentaPorDias> ventaPorDias = new List<VentaPorDias>();
+        List<VentaPorDias> ventaPorSemanas = new List<VentaPorDias>();
+
+
         List<VentaPorDias> ventaPorLunes = new List<VentaPorDias>();
         List<VentaPorDias> ventaPorMartes = new List<VentaPorDias>();
         List<VentaPorDias> ventaPorMiercoles = new List<VentaPorDias>();
@@ -147,69 +154,181 @@ public class IndexModel : PageModel
         List<VentaPorDias> ventaPorViernes = new List<VentaPorDias>();
         List<VentaPorDias> ventaPorSabado = new List<VentaPorDias>();
         List<VentaPorDias> ventaPorDomingo = new List<VentaPorDias>();
+
+
         List<List<VentaPorDias>> listaVentaPorDia = new List<List<VentaPorDias>>();
+        List<List<VentaPorDias>> listaVentaPorSemana = new List<List<VentaPorDias>>();
 
+        //OBTENEMOS LOS DATOS DE FECHAS ÚNICAS
         ventaPorDias = FechasUnicas.Where(fecha => DateTime.TryParseExact(fecha, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime fechaDateTime))
-                                          .Select(fecha => new VentaPorDias
-                                          {
-                                              Fecha = fecha,
-                                              DayOfWeek = DateTime.ParseExact(fecha, "dd-MM-yyyy", CultureInfo.InvariantCulture).DayOfWeek,
-                                              Importe = Ventas.Where(venta => venta.Fecha.HasValue && venta.Fecha.Value.Date.ToString("dd-MM-yyyy") == fecha).Sum(venta => venta.Importe)
-                                          })
-                                          .ToList();
-         this.VentasPorDias = ventaPorDias;
+                            .Select(fecha => new VentaPorDias
+                            {
+                                Fecha = fecha,
+                                DayOfWeek = DateTime.ParseExact(fecha, "dd-MM-yyyy", CultureInfo.InvariantCulture).DayOfWeek,
+                                Importe = Ventas.Where(venta => venta.Fecha.HasValue && venta.Fecha.Value.Date.ToString("dd-MM-yyyy") == fecha).Sum(venta => venta.Importe),
+                                WeekNumber = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(DateTime.ParseExact(fecha, "dd-MM-yyyy", CultureInfo.InvariantCulture), CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek),
+                                Month = DateTime.ParseExact(fecha, "dd-MM-yyyy", CultureInfo.InvariantCulture).Month,
+                                Year = DateTime.ParseExact(fecha, "dd-MM-yyyy", CultureInfo.InvariantCulture).Year
+                            })
+                            .ToList();
 
-        foreach(var item in ventaPorDias)
+        this.VentasPorDias = ventaPorDias;
+        // OBTECIÓN DE SEMANAS(POR CADA DÍA OBTENÍA UNA SEMANA REPETIDA)
+    listaVentaPorSemana = ventaPorDias
+    .GroupBy(fecha => fecha.WeekNumber.ToString())
+    .Select(grupo => grupo.ToList())
+    .ToList();
+
+
+        this.ListaVentasPorSemana = listaVentaPorSemana;
+        //ESTOS DATOS SE AGREGAN A SUS RESPECTIVAS LISTAS
+        foreach (var item in ventaPorDias)
         {
-            if(item.DayOfWeek == DayOfWeek.Monday)
+            if (item.DayOfWeek == DayOfWeek.Monday)
             {
                 ventaPorLunes.Add(item);
-            }else if(item.DayOfWeek == DayOfWeek.Tuesday)
+            }
+            else if (item.DayOfWeek == DayOfWeek.Tuesday)
             {
                 ventaPorMartes.Add(item);
-            } else if(item.DayOfWeek == DayOfWeek.Wednesday)
+            }
+            else if (item.DayOfWeek == DayOfWeek.Wednesday)
             {
                 ventaPorMiercoles.Add(item);
-            } else if(item.DayOfWeek== DayOfWeek.Thursday)
+            }
+            else if (item.DayOfWeek == DayOfWeek.Thursday)
             {
                 ventaPorJueves.Add(item);
-            }else if(item.DayOfWeek == DayOfWeek.Friday)
+            }
+            else if (item.DayOfWeek == DayOfWeek.Friday)
             {
                 ventaPorViernes.Add(item);
-            }else if(item.DayOfWeek == DayOfWeek.Saturday)
+            }
+            else if (item.DayOfWeek == DayOfWeek.Saturday)
             {
                 ventaPorSabado.Add(item);
             }
-            else if(item.DayOfWeek == DayOfWeek.Sunday)
+            else if (item.DayOfWeek == DayOfWeek.Sunday)
             {
                 ventaPorDomingo.Add(item);
             }
         }
 
-        if (SelectedDays.Contains("0"))
+        //PROCESO DE FILTRADO
+        if (SelectedDays.Contains("all"))
         {
 
-        this.Lunes = ventaPorLunes;
-        this.Martes = ventaPorMartes;
-        this.Miercoles = ventaPorMiercoles;
-        this.Jueves = ventaPorJueves;
-        this.Viernes = ventaPorViernes;
-        this.Sabado = ventaPorSabado;
-        this.Domingo = ventaPorDomingo;
-        
-        listaVentaPorDia.Add(this.Lunes);
-        listaVentaPorDia.Add(this.Martes);
-        listaVentaPorDia.Add(this.Miercoles);
-        listaVentaPorDia.Add(this.Jueves);
-        listaVentaPorDia.Add(this.Viernes);
-        listaVentaPorDia.Add(this.Sabado);
-        listaVentaPorDia.Add(this.Domingo);
-        } else if(SelectedDays.Contains("1")) 
-        {
             this.Lunes = ventaPorLunes;
-            listaVentaPorDia.Add(this.Lunes) ;
+            this.Martes = ventaPorMartes;
+            this.Miercoles = ventaPorMiercoles;
+            this.Jueves = ventaPorJueves;
+            this.Viernes = ventaPorViernes;
+            this.Sabado = ventaPorSabado;
+            this.Domingo = ventaPorDomingo;
+
+            listaVentaPorDia.Add(this.Lunes);
+            listaVentaPorDia.Add(this.Martes);
+            listaVentaPorDia.Add(this.Miercoles);
+            listaVentaPorDia.Add(this.Jueves);
+            listaVentaPorDia.Add(this.Viernes);
+            listaVentaPorDia.Add(this.Sabado);
+            listaVentaPorDia.Add(this.Domingo);
+        }
+        else
+        {
+            if (SelectedDays.Contains("1"))
+            {
+                foreach (var item in ventaPorDias)
+                {
+                    if (item.DayOfWeek == DayOfWeek.Monday)
+                    {
+                        ventaPorLunes.Add(item);
+                    }
+                }
+                this.Lunes = ventaPorLunes.Distinct().ToList();
+                listaVentaPorDia.Add(this.Lunes);
+            }
+
+            if (SelectedDays.Contains("2"))
+            {
+                foreach (var item in ventaPorDias)
+                {
+                    if (item.DayOfWeek == DayOfWeek.Tuesday)
+                    {
+                        ventaPorMartes.Add(item);
+                    }
+                }
+                this.Martes = ventaPorMartes.Distinct().ToList();
+                listaVentaPorDia.Add(this.Martes);
+            }
+
+            if (SelectedDays.Contains("3"))
+            {
+                foreach (var item in ventaPorDias)
+                {
+                    if (item.DayOfWeek == DayOfWeek.Wednesday)
+                    {
+                        ventaPorMiercoles.Add(item);
+                    }
+                }
+                this.Miercoles = ventaPorMiercoles.Distinct().ToList();
+                listaVentaPorDia.Add(this.Miercoles);
+            }
+
+            if (SelectedDays.Contains("4"))
+            {
+                foreach (var item in ventaPorDias)
+                {
+                    if (item.DayOfWeek == DayOfWeek.Thursday)
+                    {
+                        ventaPorJueves.Add(item);
+                    }
+                }
+                this.Jueves = ventaPorJueves.Distinct().ToList();
+                listaVentaPorDia.Add(this.Jueves);
+            }
+
+            if (SelectedDays.Contains("5"))
+            {
+                foreach (var item in ventaPorDias)
+                {
+                    if (item.DayOfWeek == DayOfWeek.Friday)
+                    {
+                        ventaPorViernes.Add(item);
+                    }
+                }
+                this.Viernes = ventaPorViernes.Distinct().ToList();
+                listaVentaPorDia.Add(this.Viernes);
+            }
+
+            if (SelectedDays.Contains("6"))
+            {
+                foreach (var item in ventaPorDias)
+                {
+                    if (item.DayOfWeek == DayOfWeek.Saturday)
+                    {
+                        ventaPorSabado.Add(item);
+                    }
+                }
+                this.Sabado = ventaPorSabado.Distinct().ToList();
+                listaVentaPorDia.Add(this.Sabado);
+            }
+
+            if (SelectedDays.Contains("0"))
+            {
+                foreach (var item in ventaPorDias)
+                {
+                    if (item.DayOfWeek == DayOfWeek.Sunday)
+                    {
+                        ventaPorDomingo.Add(item);
+                    }
+                }
+                this.Domingo = ventaPorDomingo.Distinct().ToList();
+                listaVentaPorDia.Add(this.Domingo);
+            }
         }
 
+  //SE AGREGAN TODAS LAS LISTAS DE LOS DÍAS A UNA LISTA DE LISTAS, PARA QUE PUEDAN SER LLAMADOS FÁCILMENTE EN LA VISTA
         this.ListaVentasPorDia = listaVentaPorDia;
 
         return Page();
@@ -232,4 +351,7 @@ public class VentaPorDias
     public string Fecha { get; set; }
     public DayOfWeek DayOfWeek { get; set; }
     public double? Importe { get; set; }
+    public int WeekNumber { get; set; }
+    public int Month { get; set; }
+    public int Year { get; set; }
 }
