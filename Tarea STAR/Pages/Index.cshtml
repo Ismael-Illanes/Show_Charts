@@ -131,95 +131,241 @@
 
     @if (Model.Ventas != null)
     {
-        @if(Model.GroupBy == "dw")
-        {   
-        int chartsAmount = Model.ListaVentasPorDia.Count();
-        string[] arr = new string[chartsAmount];
-
-        for (var i = 0; i < chartsAmount; i++)
+        @if (Model.GroupBy == "dw")
         {
-            string c = "Chart" + i;
-            arr[i] = c;
-        }
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            int chartsAmount = Model.ListaVentasPorDia.Count();
+            string[] arr = new string[chartsAmount];
 
-        for (var i = 0; i < chartsAmount; i++)
-        {
-            <canvas id='@arr[i]'></canvas>
-            <script>
-       document.getElementById("Charts").style.display = "grid";
-                var ventasPorDia = @Html.Raw(Json.Serialize(Model.ListaVentasPorDia[i].Select(item => item.Importe)));
-                var labels = @Html.Raw(Json.Serialize(Model.ListaVentasPorDia[i].Select(item => item.Fecha)));
-                var dayNames = @Html.Raw(Json.Serialize(Model.ListaVentasPorDia[i].Select(item => CultureInfo.GetCultureInfo("es-ES").DateTimeFormat.GetDayName(item.DayOfWeek))));
+            for (var i = 0; i < chartsAmount; i++)
+            {
+                string c = "ChartDay" + i;
+                arr[i] = c;
+            }
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-                var maxIndex = ventasPorDia.indexOf(Math.max(...ventasPorDia));
-                var minIndex = ventasPorDia.indexOf(Math.min(...ventasPorDia));
+            for (var i = 0; i < chartsAmount; i++)
+            {
+                <canvas id='@arr[i]'></canvas>
+                <script>
+                    document.getElementById("Charts").style.display = "grid";
+                    var ventasPorDia = @Html.Raw(Json.Serialize(Model.ListaVentasPorDia[i].Select(item => item.Importe)));
+                    var labels = @Html.Raw(Json.Serialize(Model.ListaVentasPorDia[i].Select(item => item.Fecha)));
+                    var dayNames = @Html.Raw(Json.Serialize(Model.ListaVentasPorDia[i].Select(item => CultureInfo.GetCultureInfo("es-ES").DateTimeFormat.GetDayName(item.DayOfWeek))));
 
-                var importeTotal = ventasPorDia.reduce((a, b) => a + b, 0);
+                    var maxIndex = ventasPorDia.indexOf(Math.max(...ventasPorDia));
+                    var minIndex = ventasPorDia.indexOf(Math.min(...ventasPorDia));
 
-                new Chart(@arr[i], {
+                    var importeTotal = ventasPorDia.reduce((a, b) => a + b, 0);
+
+                    new Chart(@arr[i], {
                     type: 'bar',
                     data: {
-                        labels: labels,
-                        datasets: [{
-                            label: dayNames[0] + " - Total: " + importeTotal.toFixed(2) + " €",
-                            data: ventasPorDia,
-                            backgroundColor: ventasPorDia.map((value, index) => index === maxIndex ? 'MediumSeaGreen' : index === minIndex ? 'lightcoral' : 'CornflowerBlue'),
-                            borderWidth: 1
-                        }]
+                    labels: labels ,
+                    datasets: [{
+                    label: dayNames[0] + " - Total: " + importeTotal.toFixed(2) + " €",
+                    data: ventasPorDia,
+                    backgroundColor: ventasPorDia.map((value, index) => index === maxIndex ? 'MediumSeaGreen' : index === minIndex ? 'lightcoral' : 'CornflowerBlue'),
+                    borderWidth: 1
+                    }]
                     },
                     options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                callback: function (value, index, values) {
-                                    return value.toFixed(2) + " €";
-                                }
-                            }
+                    scales: {
+                    y: {
+                    beginAtZero: true,
+                    callback: function (value, index, values) {
+                    return value.toFixed(2) + " €";
+                    }
+                    }
+                    },
+                    plugins: {
+                    legend: {
+                    labels: {
+                    boxWidth: 0,
+                    font: {
+                    size: 30
+                    }
+                    },
+                    display: true,
+                    title: {
+                    text: "Legend",
+                    color: 'red'
+                    },
+                    onClick: (e) => e.stopPropagation()
+                    },
+                    tooltip: {
+                    callbacks: {
+                    label: function (context) {
+                    var value = context.dataset.data[context.dataIndex];
+                    return value.toFixed(2) + " €";
+                    }
+                    }
+                    }
+                    }
+                    }
+                    });
+                </script>
+            }
+        }
+        else if (Model.GroupBy == "w")
+        {
+            int chartsAmount = Model.ListaVentasPorSemana.Count();
+            string[] arr = new string[chartsAmount];
+
+            for (var i = 0; i < chartsAmount; i++)
+            {
+                string c = "ChartWeek" + i;
+                arr[i] = c;
+            }
+
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+            @for (var i = 0; i < chartsAmount; i++)
+            {
+                <canvas id='@arr[i]'></canvas>
+                <script>
+                    document.getElementById("Charts").style.display = "grid";
+                    var ventasPorSemana = @Html.Raw(Json.Serialize(Model.ListaVentasPorSemana[i].Select(item => item.Importe)));
+                    var labels = @Html.Raw(Json.Serialize(Model.ListaVentasPorSemana[i].Select(item => item.Fecha.ToString() + " - " + CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(Convert.ToDateTime(item.Fecha).DayOfWeek))));
+
+
+
+                    var weekNumber = @Html.Raw(Json.Serialize(Model.ListaVentasPorSemana[i].Select(item => CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(Convert.ToDateTime(item.Fecha), CalendarWeekRule.FirstDay, DayOfWeek.Monday))));
+
+                    var year = @Html.Raw(Json.Serialize(Model.ListaVentasPorSemana[i].Select(item => item.Year)));
+
+                    var maxIndex = ventasPorSemana.indexOf(Math.max(...ventasPorSemana));
+                    var minIndex = ventasPorSemana.indexOf(Math.min(...ventasPorSemana));
+
+                    var importeTotal = ventasPorSemana.reduce((a, b) => a + b, 0);
+
+                    new Chart('@arr[i]', {
+                    type: 'bar',
+                    data: {
+                    labels: labels,
+                    datasets: [{
+                    label: "Semana nº " + weekNumber[0] + "(" + year[0]  + ")" + " - Total: " + importeTotal.toFixed(2) + " €",
+                    data: ventasPorSemana,
+                    backgroundColor: ventasPorSemana.map((value, index) => index === maxIndex ? 'MediumSeaGreen' : index === minIndex ? 'lightcoral' : 'CornflowerBlue'),
+                    borderWidth: 1
+                    }]
+                    },
+                    options: {
+                    scales: {
+                    y: {
+                    beginAtZero: true,
+                    callback: function (value, index, values) {
+                    return value.toFixed(2) + " €";
+                    }
+                    }
+                    },
+                    plugins: {
+                    legend: {
+                    labels: {
+                    boxWidth: 0,
+                    font: {
+                    size: 15
+                    }
+                    },
+                    display: true,
+                    onClick: (e) => e.stopPropagation()
+                    },
+                    tooltip: {
+                    callbacks: {
+                    label: function (context) {
+                    var value = context.dataset.data[context.dataIndex];
+                    return value.toFixed(2) + " €";
+                    }
+                    }
+                    }
+                    }
+                    }
+                    });
+                </script>
+            }
+        }
+        else if (Model.GroupBy == "m")
+        {
+            int chartsAmount = Model.ListaVentasPorMes.Count();
+            string[] arr = new string[chartsAmount];
+
+            for (var i = 0; i < chartsAmount; i++)
+            {
+                string c = "ChartWeek" + i;
+                arr[i] = c;
+            }
+
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+            @for (var i = 0; i < chartsAmount; i++)
+            {
+                <canvas id='@arr[i]'></canvas>
+                <script>
+                    document.getElementById("Charts").style.display = "grid";
+
+                    var ventasPorMes = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Importe)));
+                    var labels = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(Convert.ToDateTime(item.Fecha), CalendarWeekRule.FirstDay, DayOfWeek.Monday)).Distinct().ToList()));
+
+
+                    var month = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Month)));
+
+
+                    var maxIndex = ventasPorMes.indexOf(Math.max(...ventasPorMes));
+                    var minIndex = ventasPorMes.indexOf(Math.min(...ventasPorMes));
+
+                    var importeTotal = ventasPorMes.reduce((a, b) => a + b, 0);
+
+                    new Chart('@arr[i]', {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: "Mes nº " + "(" + month[0] + ")" + " - Total: " + importeTotal.toFixed(2) + " €",
+                                data: ventasPorMes,
+                                backgroundColor: ventasPorMes.map((value, index) => index === maxIndex ? 'MediumSeaGreen' : index === minIndex ? 'lightcoral' : 'CornflowerBlue'),
+                                borderWidth: 1
+                            }]
                         },
-                        plugins: {
-                            legend: {
-                                labels: {
-                                    boxWidth: 0,
-                                    font: {
-                                        size: 30
-                                    }
-                                },
-                                display: true,
-                                title: {
-                                    text: "Legend",
-                                    color: 'red'
-                                },
-                                onClick: (e) => e.stopPropagation()
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function (context) {
-                                        var value = context.dataset.data[context.dataIndex];
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    callback: function (value, index, values) {
                                         return value.toFixed(2) + " €";
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        boxWidth: 0,
+                                        font: {
+                                            size: 15
+                                        }
+                                    },
+                                    display: true,
+                                    onClick: (e) => e.stopPropagation()
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function (context) {
+                                            var datasetIndex = context.datasetIndex;
+                                            var dataIndex = context.dataIndex;
+                                            var value = context.dataset.data[dataIndex];
+                                            var weekLabel = labels[dataIndex];
+                                            var weekValues = context.chart.data.datasets[datasetIndex].data.filter((_, index) => labels[index] === weekLabel);
+                                            var weekTotal = weekValues.reduce((total, val) => total + val, 0);
+                                            return "Total Semana: " + weekTotal.toFixed(2) + " €";
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                });
+                    });
+
                 </script>
-
             }
-        } else if(Model.GroupBy == "w")
-        {
-            @foreach (var semana in Model.ListaVentasPorSemana)
-            {
-                <h3>Semana @semana[0].WeekNumber</h3>
-                <ul>
-                    @foreach (var fechaVenta in semana)
-                    {
-                        <li>@fechaVenta.Fecha - Importe: @fechaVenta.Importe</li>
-                    }
-                </ul>
-            }
-
         }
+
     }
 
 

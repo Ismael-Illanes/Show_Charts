@@ -12,6 +12,7 @@ using System.Linq;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using static IndexModel;
 
 public class IndexModel : PageModel
 {
@@ -50,10 +51,13 @@ public class IndexModel : PageModel
     public List<VentaPorDias> Sabado { get; set; }
     public List<VentaPorDias> Domingo { get; set; }
 
-    public List<VentaPorDias> VentasPorSemanas { get; set; }
     public List<VentaPorDias> VentasPorDias { get; set; }
+    public List<VentaPorDias> VentasPorSemanas { get; set; }
+    public List<VentaPorDias> VentasPorMeses { get; set; }
+
     public List<List<VentaPorDias>> ListaVentasPorDia { get; set; }
     public List<List<VentaPorDias>> ListaVentasPorSemana { get; set; }
+    public List<List<VentaPorDias>> ListaVentasPorMes { get; set; }
 
     public IndexModel(ILogger<IndexModel> logger, AppDBContext dbContext)
     {
@@ -139,12 +143,12 @@ public class IndexModel : PageModel
 
 
 
-// OBTENCIÓN FECHAS ÚNICAS (POR CADA HORA ME GENERABA UNA FECHA REPETIDA)
+        // OBTENCIÓN FECHAS ÚNICAS (POR CADA HORA ME GENERABA UNA FECHA REPETIDA)
 
         this.FechasUnicas = Ventas.Select(item => item.Fecha.HasValue ? item.Fecha.Value.Date.ToString("dd-MM-yyyy") : "").Distinct().ToList();
 
         List<VentaPorDias> ventaPorDias = new List<VentaPorDias>();
-        List<VentaPorDias> ventaPorSemanas = new List<VentaPorDias>();
+
 
 
         List<VentaPorDias> ventaPorLunes = new List<VentaPorDias>();
@@ -158,6 +162,7 @@ public class IndexModel : PageModel
 
         List<List<VentaPorDias>> listaVentaPorDia = new List<List<VentaPorDias>>();
         List<List<VentaPorDias>> listaVentaPorSemana = new List<List<VentaPorDias>>();
+        List<List<VentaPorDias>> listaVentaPorMes = new List<List<VentaPorDias>>();
 
         //OBTENEMOS LOS DATOS DE FECHAS ÚNICAS
         ventaPorDias = FechasUnicas.Where(fecha => DateTime.TryParseExact(fecha, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime fechaDateTime))
@@ -173,14 +178,75 @@ public class IndexModel : PageModel
                             .ToList();
 
         this.VentasPorDias = ventaPorDias;
-        // OBTECIÓN DE SEMANAS(POR CADA DÍA OBTENÍA UNA SEMANA REPETIDA)
-    listaVentaPorSemana = ventaPorDias
-    .GroupBy(fecha => fecha.WeekNumber.ToString())
-    .Select(grupo => grupo.ToList())
-    .ToList();
 
+        // OBTECIÓN MESES
+
+        if (SelectedDays.Contains("all"))
+        {
+            listaVentaPorMes = ventaPorDias
+                .GroupBy(fecha => new { fecha.Year, fecha.Month })
+                .Select(grupo => grupo.ToList())
+                .ToList();
+        }
+        else
+        {
+            var selectedDayOfWeeks = SelectedDays.Select(day => Convert.ToInt32(day)).ToList();
+
+            listaVentaPorMes = new List<List<VentaPorDias>>();
+
+            foreach (var month in ventaPorDias.Select(fecha => new { fecha.Year, fecha.Month }).Distinct())
+            {
+                var grupo = ventaPorDias
+          .Where(fecha => fecha.Year == month.Year && fecha.Month == month.Month && selectedDayOfWeeks.Contains((int)fecha.DayOfWeek))
+          .GroupBy(fecha => CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(Convert.ToDateTime(fecha), CalendarWeekRule.FirstDay, DayOfWeek.Monday))
+          .SelectMany(semana => semana.ToList())
+          .ToList();
+
+
+
+                if (grupo.Any())
+                {
+                    listaVentaPorMes.Add(grupo);
+                }
+            }
+        }
+
+        this.ListaVentasPorMes = listaVentaPorMes;
+
+
+        // OBTECIÓN DE SEMANAS(POR CADA DÍA OBTENÍA UNA SEMANA REPETIDA)
+
+
+        if (SelectedDays.Contains("all"))
+        {
+            listaVentaPorSemana = ventaPorDias
+                .GroupBy(fecha => new { fecha.Year, fecha.WeekNumber })
+                .Select(grupo => grupo.ToList())
+                .ToList();
+        }
+        else
+        {
+            var selectedDayOfWeeks = SelectedDays.Select(day => Convert.ToInt32(day)).ToList();
+
+            listaVentaPorSemana = new List<List<VentaPorDias>>();
+
+            foreach (var weekNumber in ventaPorDias.Select(fecha => new { fecha.Year, fecha.WeekNumber }).Distinct())
+            {
+                var grupo = ventaPorDias
+                    .Where(fecha => fecha.Year == weekNumber.Year && fecha.WeekNumber == weekNumber.WeekNumber && selectedDayOfWeeks.Contains(Convert.ToInt32(fecha.DayOfWeek)))
+                    .ToList();
+
+                if (grupo.Any())
+                {
+                    listaVentaPorSemana.Add(grupo);
+                }
+            }
+        }
 
         this.ListaVentasPorSemana = listaVentaPorSemana;
+
+
+
         //ESTOS DATOS SE AGREGAN A SUS RESPECTIVAS LISTAS
         foreach (var item in ventaPorDias)
         {
