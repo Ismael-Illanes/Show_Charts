@@ -57,7 +57,7 @@ public class IndexModel : PageModel
 
     public List<List<VentaPorDias>> ListaVentasPorDia { get; set; }
     public List<List<VentaPorDias>> ListaVentasPorSemana { get; set; }
-    public List<List<VentaPorDias>> ListaVentasPorMes { get; set; }
+    public List<List<VentaPorMes>> ListaVentasPorMes { get; set; }
 
     public IndexModel(ILogger<IndexModel> logger, AppDBContext dbContext)
     {
@@ -160,9 +160,12 @@ public class IndexModel : PageModel
         List<VentaPorDias> ventaPorDomingo = new List<VentaPorDias>();
 
 
+
+
         List<List<VentaPorDias>> listaVentaPorDia = new List<List<VentaPorDias>>();
         List<List<VentaPorDias>> listaVentaPorSemana = new List<List<VentaPorDias>>();
         List<List<VentaPorDias>> listaVentaPorMes = new List<List<VentaPorDias>>();
+
 
         //OBTENEMOS LOS DATOS DE FECHAS ÚNICAS
         ventaPorDias = FechasUnicas.Where(fecha => DateTime.TryParseExact(fecha, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime fechaDateTime))
@@ -181,37 +184,85 @@ public class IndexModel : PageModel
 
         // OBTECIÓN MESES
 
+
+        List<List<VentaPorMes>> ListaVentasPorMes = new List<List<VentaPorMes>>();
+
         if (SelectedDays.Contains("all"))
         {
-            listaVentaPorMes = ventaPorDias
-                .GroupBy(fecha => new { fecha.Year, fecha.Month })
-                .Select(grupo => grupo.ToList())
+            var VentasPorMeses = ventaPorDias
+                .GroupBy(fecha => new { fecha.Year, fecha.Month,WeekOfYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(Convert.ToDateTime(fecha.Fecha), CalendarWeekRule.FirstDay, DayOfWeek.Monday) })
+                .GroupBy(grupo => new { grupo.Key.Year, grupo.Key.Month })
+                .Select(grupo => new
+                {
+                    Mes = grupo.Key.Month,
+                    Year = grupo.Key.Year,
+                    VentasPorMeses = grupo.Select(semana => new VentaPorMes
+                    {
+                        Mes = grupo.Key.Month,
+                        Year = grupo.Key.Year,
+                        Semana = semana.Key.WeekOfYear - CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(new DateTime(grupo.Key.Year, grupo.Key.Month, 1), CalendarWeekRule.FirstDay, DayOfWeek.Monday) + 1,
+                        Importe = (decimal)semana.Sum(venta => venta.Importe)
+                    }).ToList()
+                })
                 .ToList();
+
+            foreach (var ventaPorMes in VentasPorMeses)
+            {
+                int mes = ventaPorMes.Mes;
+                var mesExistente = ListaVentasPorMes.FirstOrDefault(v => v.Any(m => m.Mes == mes));
+
+                if (mesExistente != null)
+                {
+                    mesExistente.AddRange(ventaPorMes.VentasPorMeses);
+                }
+                else
+                {
+                    ListaVentasPorMes.Add(ventaPorMes.VentasPorMeses);
+                }
+            }
         }
         else
         {
+            // Filtrar las ventas por semana según los DayOfWeek seleccionados
             var selectedDayOfWeeks = SelectedDays.Select(day => Convert.ToInt32(day)).ToList();
 
-            listaVentaPorMes = new List<List<VentaPorDias>>();
-
-            foreach (var month in ventaPorDias.Select(fecha => new { fecha.Year, fecha.Month }).Distinct())
-            {
-                var grupo = ventaPorDias
-          .Where(fecha => fecha.Year == month.Year && fecha.Month == month.Month && selectedDayOfWeeks.Contains((int)fecha.DayOfWeek))
-          .GroupBy(fecha => CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(Convert.ToDateTime(fecha), CalendarWeekRule.FirstDay, DayOfWeek.Monday))
-          .SelectMany(semana => semana.ToList())
-          .ToList();
-
-
-
-                if (grupo.Any())
+            var ventasPorSemana = ventaPorDias
+                .Where(fecha => selectedDayOfWeeks.Contains((int)fecha.DayOfWeek))
+                .GroupBy(fecha => new { fecha.Year, fecha.Month, WeekOfYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(Convert.ToDateTime(fecha.Fecha), CalendarWeekRule.FirstDay, DayOfWeek.Monday) })
+                .GroupBy(grupo => new { grupo.Key.Year, grupo.Key.Month })
+                .Select(grupo => new
                 {
-                    listaVentaPorMes.Add(grupo);
+                    Mes = grupo.Key.Month,
+                    Year = grupo.Key.Year,
+                    VentasPorSemana = grupo.Select(semana => new VentaPorMes
+                    {
+                        Mes = grupo.Key.Month,
+                        Year = grupo.Key.Year,
+                        Semana = semana.Key.WeekOfYear - CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(new DateTime(grupo.Key.Year, grupo.Key.Month, 1), CalendarWeekRule.FirstDay, DayOfWeek.Monday) + 1,
+                        Importe = (decimal)semana.Sum(venta => venta.Importe)
+                    }).ToList()
+                })
+                .ToList();
+
+            foreach (var ventaPorMes in ventasPorSemana)
+            {
+                int mes = ventaPorMes.Mes;
+                var mesExistente = ListaVentasPorMes.FirstOrDefault(v => v.Any(m => m.Mes == mes));
+
+                if (mesExistente != null)
+                {
+                    mesExistente.AddRange(ventaPorMes.VentasPorSemana);
+                }
+                else
+                {
+                    ListaVentasPorMes.Add(ventaPorMes.VentasPorSemana);
                 }
             }
         }
 
-        this.ListaVentasPorMes = listaVentaPorMes;
+            this.ListaVentasPorMes = ListaVentasPorMes;
+        
+
 
 
         // OBTECIÓN DE SEMANAS(POR CADA DÍA OBTENÍA UNA SEMANA REPETIDA)
@@ -420,4 +471,19 @@ public class VentaPorDias
     public int WeekNumber { get; set; }
     public int Month { get; set; }
     public int Year { get; set; }
+}
+
+
+public class VentaPorSemana
+{
+    public int Week { get; set; }
+    public decimal Importe {get; set;}
+}
+public class VentaPorMes
+{
+    public int Mes { get; set; }
+    public int Semana { get; set; }
+    public decimal Importe { get; set; }
+    public int Day { get; set; }
+    public int Year { get;set; }
 }

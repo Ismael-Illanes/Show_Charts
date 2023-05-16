@@ -243,7 +243,7 @@
                     data: {
                     labels: labels,
                     datasets: [{
-                    label: "Semana nº " + weekNumber[0] + "(" + year[0]  + ")" + " - Total: " + importeTotal.toFixed(2) + " €",
+                    label: "Semana nº " + weekNumber[0] + " (" + year[0]  + ")" + " - Total: " + importeTotal.toFixed(2) + " €",
                     data: ventasPorSemana,
                     backgroundColor: ventasPorSemana.map((value, index) => index === maxIndex ? 'MediumSeaGreen' : index === minIndex ? 'lightcoral' : 'CornflowerBlue'),
                     borderWidth: 1
@@ -303,23 +303,19 @@
                     document.getElementById("Charts").style.display = "grid";
 
                     var ventasPorMes = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Importe)));
-                    var labels = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(Convert.ToDateTime(item.Fecha), CalendarWeekRule.FirstDay, DayOfWeek.Monday)).Distinct().ToList()));
-
-
-                    var month = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Month)));
-
-
+                    var semanas = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Semana)));
+                    var month = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Mes)));
+                    var year = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Year)));
+                    var importeTotal = ventasPorMes.reduce((a, b) => a + b, 0);
                     var maxIndex = ventasPorMes.indexOf(Math.max(...ventasPorMes));
                     var minIndex = ventasPorMes.indexOf(Math.min(...ventasPorMes));
-
-                    var importeTotal = ventasPorMes.reduce((a, b) => a + b, 0);
 
                     new Chart('@arr[i]', {
                         type: 'bar',
                         data: {
-                            labels: labels,
+                            labels: semanas,
                             datasets: [{
-                                label: "Mes nº " + "(" + month[0] + ")" + " - Total: " + importeTotal.toFixed(2) + " €",
+                                label: "Mes nº " + "(" + month[0] + ")" + " del año " + year[0] + " - Total: " + importeTotal.toFixed(2) + " €",
                                 data: ventasPorMes,
                                 backgroundColor: ventasPorMes.map((value, index) => index === maxIndex ? 'MediumSeaGreen' : index === minIndex ? 'lightcoral' : 'CornflowerBlue'),
                                 borderWidth: 1
@@ -348,23 +344,18 @@
                                 tooltip: {
                                     callbacks: {
                                         label: function (context) {
-                                            var datasetIndex = context.datasetIndex;
-                                            var dataIndex = context.dataIndex;
-                                            var value = context.dataset.data[dataIndex];
-                                            var weekLabel = labels[dataIndex];
-                                            var weekValues = context.chart.data.datasets[datasetIndex].data.filter((_, index) => labels[index] === weekLabel);
-                                            var weekTotal = weekValues.reduce((total, val) => total + val, 0);
-                                            return "Total Semana: " + weekTotal.toFixed(2) + " €";
+                                            var value = context.dataset.data[context.dataIndex];
+                                            return value.toFixed(2) + " €";
                                         }
                                     }
                                 }
                             }
                         }
                     });
-
                 </script>
             }
         }
+
 
     }
 
