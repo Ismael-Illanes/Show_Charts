@@ -54,10 +54,14 @@ public class IndexModel : PageModel
     public List<VentaPorDias> VentasPorDias { get; set; }
     public List<VentaPorDias> VentasPorSemanas { get; set; }
     public List<VentaPorDias> VentasPorMeses { get; set; }
+    public List<VentaPorDias> VentasPorAnos { get; set; }
 
     public List<List<VentaPorDias>> ListaVentasPorDia { get; set; }
     public List<List<VentaPorDias>> ListaVentasPorSemana { get; set; }
     public List<List<VentaPorMes>> ListaVentasPorMes { get; set; }
+    public List<List<VentaPorMes>> ListaVentasPorAno { get; set; }
+
+
 
     public IndexModel(ILogger<IndexModel> logger, AppDBContext dbContext)
     {
@@ -72,6 +76,8 @@ public class IndexModel : PageModel
     {
 
     }
+
+ 
 
     public IActionResult OnPost()
     {
@@ -182,7 +188,98 @@ public class IndexModel : PageModel
 
         this.VentasPorDias = ventaPorDias;
 
-        // OBTECIÓN MESES
+
+
+        // OBTENER VENTAS EN UN AÑO, POR CADA MES.
+        Dictionary<int, List<VentaPorMes>> ventasPorAño = new Dictionary<int, List<VentaPorMes>>();
+        if (SelectedDays.Contains("all"))
+        {
+            var ventasAgrupadas = ventaPorDias
+                .GroupBy(fecha => new { fecha.Year, fecha.Month })
+                .Select(grupo => new
+                {
+                    Mes = grupo.Key.Month,
+                    Year = grupo.Key.Year,
+                    ImporteTotal = grupo.Sum(venta => venta.Importe)
+                })
+                .ToList();
+
+            foreach (var ventaAgrupada in ventasAgrupadas)
+            {
+                int mes = ventaAgrupada.Mes;
+                int año = ventaAgrupada.Year;
+
+                if (ventasPorAño.ContainsKey(año))
+                {
+                    ventasPorAño[año].Add(new VentaPorMes
+                    {
+                        Mes = mes,
+                        Year = año,
+                        Importe = (decimal)ventaAgrupada.ImporteTotal
+                    });
+                }
+                else
+                {
+                    ventasPorAño[año] = new List<VentaPorMes>
+            {
+                new VentaPorMes
+                {
+                    Mes = mes,
+                    Year = año,
+                    Importe = (decimal)ventaAgrupada.ImporteTotal
+                }
+            };
+                }
+            }
+        }
+        else
+        {
+            var selectedDayOfWeeks = SelectedDays.Select(day => (DayOfWeek)Enum.Parse(typeof(DayOfWeek), day)).ToList();
+
+            var ventasAgrupadas = ventaPorDias
+                .Where(fecha => selectedDayOfWeeks.Contains(fecha.DayOfWeek))
+                .GroupBy(fecha => new { fecha.Year, fecha.Month })
+                .Select(grupo => new
+                {
+                    Mes = grupo.Key.Month,
+                    Year = grupo.Key.Year,
+                    ImporteTotal = grupo.Sum(venta => venta.Importe)
+                })
+                .ToList();
+
+            foreach (var ventaAgrupada in ventasAgrupadas)
+            {
+                int mes = ventaAgrupada.Mes;
+                int año = ventaAgrupada.Year;
+
+                if (ventasPorAño.ContainsKey(año))
+                {
+                    ventasPorAño[año].Add(new VentaPorMes
+                    {
+                        Mes = mes,
+                        Year = año,
+                        Importe = (decimal)ventaAgrupada.ImporteTotal
+                    });
+                }
+                else
+                {
+                    ventasPorAño[año] = new List<VentaPorMes>
+            {
+                new VentaPorMes
+                {
+                    Mes = mes,
+                    Year = año,
+                    Importe = (decimal)ventaAgrupada.ImporteTotal
+                }
+            };
+                }
+            }
+        }
+
+        ListaVentasPorAno = ventasPorAño.Values.ToList();
+
+
+        // OBTECIÓN MESES, VENTA POR SEMANAS **********************************************
 
 
         List<List<VentaPorMes>> ListaVentasPorMes = new List<List<VentaPorMes>>();
@@ -473,12 +570,15 @@ public class VentaPorDias
     public int Year { get; set; }
 }
 
-
 public class VentaPorSemana
 {
-    public int Week { get; set; }
-    public decimal Importe {get; set;}
+    public int Mes { get; set; }
+    public int Semana { get; set; }
+    public decimal Importe { get; set; }
+    public int Day { get; set; }
+    public int Year { get; set; }
 }
+
 public class VentaPorMes
 {
     public int Mes { get; set; }
