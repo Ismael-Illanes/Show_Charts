@@ -16,7 +16,7 @@
     <header>
     </header>
     <div class="container-fluid text-center">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-3 container-fluid text-center">
             @RenderBody()
         </main>
     </div>
@@ -25,11 +25,13 @@
         <div class="container">
             @DateTime.Now.Year - STAR
         </div>
+
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/chartsGenerator.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.0/Chart.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
