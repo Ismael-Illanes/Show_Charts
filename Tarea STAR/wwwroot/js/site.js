@@ -6,6 +6,57 @@
 
 
 
+    $('.divGrow').click(function () {
+        var $element = $(this);
+
+        if ($element.css('max-height') === '350px') {
+            $element.css({
+                'max-height': 'none',
+                'max-width': 'none',
+                'position': 'fixed',
+                'left': '50%',
+                'top': '50%',
+                'transform': 'translate(-50%, -50%)',
+                'z-index': '99999'
+            });
+
+            if (!$('.overlay').length) {
+                var $overlay = $('<div>').addClass('overlay').css({
+                    'position': 'fixed',
+                    'top': '0',
+                    'left': '0',
+                    'width': '100%',
+                    'height': '100%',
+                    'background-color': 'rgba(0, 0, 0, 0.9)',
+                    'z-index': '99998'
+                });
+
+                $('body').append($overlay);
+                $overlay.click(function () {
+                    $element.trigger('click');
+                });
+            }
+        } else {
+            $element.css({
+                'max-width': '500px',
+                'max-height': '350px',
+                'position': 'static',
+                'left': 'auto',
+                'top': 'auto',
+                'transform': 'none',
+                'z-index': 'auto'
+            });
+            $('.overlay').remove();
+        }
+    });
+
+
+
+
+
+
+
+
 
     initDay.on('input', function () {
         if (initDay.val().length === 0) {
@@ -47,24 +98,3 @@
     $(window).on('load', calcScrollValue);
 });
 
- // FUNCTION CLICK ON DIV AND FULLSCREEN EXPANDING
-
-var isFullscreen = false;
-
-function fullscreen() {
-    var d = {};
-    var speed = 300;
-    if (!isFullscreen) { 
-        d.width = "100%";
-        d.height = "100%";
-        isFullscreen = true;
-        $("h1").slideUp(speed);
-    }
-    else {           
-        d.width = "300px";
-        d.height = "100px";
-        isFullscreen = false;
-        $("h1").slideDown(speed);
-    }
-    $("#controls").animate(d, speed);
-}

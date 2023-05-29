@@ -39,6 +39,9 @@ public class IndexModel : PageModel
     [BindProperty]
     [Required(ErrorMessage = "Se requiere una agrupación")]
     public string GroupBy { get; set; }
+    [BindProperty]
+    [Required(ErrorMessage = "Se requiere un filtro")]
+    public string Filter { get; set; }
     public List<string> FechasUnicas { get; set; }
     [BindProperty]
     [RequiredDays(ErrorMessage = "Se requiere un día o días a analizar")]
@@ -52,6 +55,7 @@ public class IndexModel : PageModel
     public List<VentaPorDias> Domingo { get; set; }
 
     public List<VentaPorDias> VentasPorDias { get; set; }
+
     public List<VentaPorDias> VentasPorSemanas { get; set; }
     public List<VentaPorDias> VentasPorMeses { get; set; }
     public List<VentaPorDias> VentasPorAnos { get; set; }
@@ -117,7 +121,7 @@ public class IndexModel : PageModel
             connection.Open();
 
             string query = @"
-                SELECT Fecha, Hora, Importe
+                SELECT Fecha, Hora, Importe, Documento
                 FROM Ventas
                 WHERE Fecha >= @diaInicio AND Fecha <= @diaFinal AND Hora >= @horaInicio AND Hora <= @horaFinal
                 ORDER BY Fecha, Hora";
@@ -138,7 +142,8 @@ public class IndexModel : PageModel
                 {
                     Fecha = reader.GetDateTime(0),
                     Hora = reader.GetTimeSpan(1),
-                    Importe = reader.GetDouble(2)
+                    Importe = reader.GetDouble(2),
+                    Documento = reader.GetString(3)
                 };
 
                 ventasList.Add(venta);
@@ -154,7 +159,7 @@ public class IndexModel : PageModel
         this.FechasUnicas = Ventas.Select(item => item.Fecha.HasValue ? item.Fecha.Value.Date.ToString("dd-MM-yyyy") : "").Distinct().ToList();
 
         List<VentaPorDias> ventaPorDias = new List<VentaPorDias>();
-
+ 
 
 
         List<VentaPorDias> ventaPorLunes = new List<VentaPorDias>();
@@ -180,11 +185,17 @@ public class IndexModel : PageModel
                                 Fecha = fecha,
                                 DayOfWeek = DateTime.ParseExact(fecha, "dd-MM-yyyy", CultureInfo.InvariantCulture).DayOfWeek,
                                 Importe = Ventas.Where(venta => venta.Fecha.HasValue && venta.Fecha.Value.Date.ToString("dd-MM-yyyy") == fecha).Sum(venta => venta.Importe),
+                                CantidadDocumentos = Ventas.Count(docu => docu.Fecha.HasValue && docu.Fecha.Value.Date == DateTime.ParseExact(fecha, "dd-MM-yyyy", CultureInfo.InvariantCulture)),
                                 WeekNumber = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(DateTime.ParseExact(fecha, "dd-MM-yyyy", CultureInfo.InvariantCulture), CultureInfo.CurrentCulture.DateTimeFormat.CalendarWeekRule, CultureInfo.CurrentCulture.DateTimeFormat.FirstDayOfWeek),
                                 Month = DateTime.ParseExact(fecha, "dd-MM-yyyy", CultureInfo.InvariantCulture).Month,
                                 Year = DateTime.ParseExact(fecha, "dd-MM-yyyy", CultureInfo.InvariantCulture).Year
                             })
                             .ToList();
+
+
+
+
+
 
         this.VentasPorDias = ventaPorDias;
 
@@ -200,7 +211,8 @@ public class IndexModel : PageModel
                 {
                     Mes = grupo.Key.Month,
                     Year = grupo.Key.Year,
-                    ImporteTotal = grupo.Sum(venta => venta.Importe)
+                    ImporteTotal = grupo.Sum(venta => venta.Importe),
+                    CantidadDocumento = grupo.Sum(venta => venta.CantidadDocumentos)
                 })
                 .ToList();
 
@@ -215,7 +227,9 @@ public class IndexModel : PageModel
                     {
                         Mes = mes,
                         Year = año,
-                        Importe = (decimal)ventaAgrupada.ImporteTotal
+                        Importe = (decimal)ventaAgrupada.ImporteTotal,
+                        CantidadDocumentos = ventaAgrupada.CantidadDocumento
+                       
                     });
                 }
                 else
@@ -226,7 +240,8 @@ public class IndexModel : PageModel
                 {
                     Mes = mes,
                     Year = año,
-                    Importe = (decimal)ventaAgrupada.ImporteTotal
+                    Importe = (decimal)ventaAgrupada.ImporteTotal,
+                    CantidadDocumentos = ventaAgrupada.CantidadDocumento
                 }
             };
                 }
@@ -243,7 +258,8 @@ public class IndexModel : PageModel
                 {
                     Mes = grupo.Key.Month,
                     Year = grupo.Key.Year,
-                    ImporteTotal = grupo.Sum(venta => venta.Importe)
+                    ImporteTotal = grupo.Sum(venta => venta.Importe),
+                    CantidadDocumentos = grupo.Sum(venta => venta.CantidadDocumentos)
                 })
                 .ToList();
 
@@ -258,7 +274,8 @@ public class IndexModel : PageModel
                     {
                         Mes = mes,
                         Year = año,
-                        Importe = (decimal)ventaAgrupada.ImporteTotal
+                        Importe = (decimal)ventaAgrupada.ImporteTotal,
+                        CantidadDocumentos = ventaAgrupada.CantidadDocumentos
                     });
                 }
                 else
@@ -269,7 +286,8 @@ public class IndexModel : PageModel
                 {
                     Mes = mes,
                     Year = año,
-                    Importe = (decimal)ventaAgrupada.ImporteTotal
+                    Importe = (decimal)ventaAgrupada.ImporteTotal,
+                    CantidadDocumentos = ventaAgrupada.CantidadDocumentos
                 }
             };
                 }
@@ -298,7 +316,8 @@ public class IndexModel : PageModel
                         Mes = grupo.Key.Month,
                         Year = grupo.Key.Year,
                         Semana = semana.Key.WeekOfYear - CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(new DateTime(grupo.Key.Year, grupo.Key.Month, 1), CalendarWeekRule.FirstDay, DayOfWeek.Monday) + 1,
-                        Importe = (decimal)semana.Sum(venta => venta.Importe)
+                        Importe = (decimal)semana.Sum(venta => venta.Importe),
+                        CantidadDocumentos = semana.Sum(venta => venta.CantidadDocumentos)
                     }).ToList()
                 })
                 .ToList();
@@ -336,7 +355,8 @@ public class IndexModel : PageModel
                         Mes = grupo.Key.Month,
                         Year = grupo.Key.Year,
                         Semana = semana.Key.WeekOfYear - CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(new DateTime(grupo.Key.Year, grupo.Key.Month, 1), CalendarWeekRule.FirstDay, DayOfWeek.Monday) + 1,
-                        Importe = (decimal)semana.Sum(venta => venta.Importe)
+                        Importe = (decimal)semana.Sum(venta => venta.Importe),
+                        CantidadDocumentos = semana.Sum(venta => venta.CantidadDocumentos)
                     }).ToList()
                 })
                 .ToList();
@@ -560,6 +580,9 @@ public class RequiredDaysAttribute : ValidationAttribute
     }
 }
 
+
+
+
 public class VentaPorDias
 {
     public string Fecha { get; set; }
@@ -568,6 +591,7 @@ public class VentaPorDias
     public int WeekNumber { get; set; }
     public int Month { get; set; }
     public int Year { get; set; }
+    public int CantidadDocumentos { get; set; }
 }
 
 public class VentaPorSemana
@@ -577,6 +601,7 @@ public class VentaPorSemana
     public decimal Importe { get; set; }
     public int Day { get; set; }
     public int Year { get; set; }
+    public int CantidadDocumentos { get; set; }
 }
 
 public class VentaPorMes
@@ -586,4 +611,5 @@ public class VentaPorMes
     public decimal Importe { get; set; }
     public int Day { get; set; }
     public int Year { get;set; }
+    public int CantidadDocumentos { get; set; }
 }

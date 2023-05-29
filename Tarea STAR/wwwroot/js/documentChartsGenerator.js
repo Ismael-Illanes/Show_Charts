@@ -1,12 +1,12 @@
 ﻿
-function DaysChartGenerator(x) {
+function DocumentDaysChartGenerator(x) {
 
     new Chart(x, {
         type: 'bar',
         data: {
             labels: labels,
             datasets: [{
-                label: dayNames[0] + " - Total: " + importeTotal.toFixed(2) + " €",
+                label: dayNames[0] + " - Total documentos: " + importeTotal,
                 data: ventasPorDia,
                 backgroundColor: ventasPorDia.map((value, index) => {
                     return index === maxIndex ? 'MediumSeaGreen' : index === minIndex ? 'lightcoral' : 'CornflowerBlue';
@@ -24,7 +24,7 @@ function DaysChartGenerator(x) {
                 y: {
                     beginAtZero: true,
                     callback: function (value, index, values) {
-                        return value.toFixed(2) + " €";
+                        return value;
                     }
                 }
             },
@@ -47,7 +47,7 @@ function DaysChartGenerator(x) {
                     callbacks: {
                         label: function (context) {
                             var value = context.dataset.data[context.dataIndex];
-                            return value.toFixed(2) + " €";
+                            return value + " documentos";
                         }
                     }
                 }
@@ -56,13 +56,13 @@ function DaysChartGenerator(x) {
     });
 }
 
-function WeekChartGenerator(x) {
+function DocumentWeekChartGenerator(x) {
     new Chart(x, {
         type: 'bar',
         data: {
             labels: labels,
             datasets: [{
-                label: "Semana nº " + weekNumber[0] + " (" + year[0] + ")" + " - Total: " + importeTotal.toFixed(2) + " €",
+                label: "Semana nº " + weekNumber[0] + " (" + year[0] + ")" + " - Total documentos: " + importeTotal,
                 data: ventasPorSemana,
                 backgroundColor: ventasPorSemana.map((value, index) => index === maxIndex ? 'MediumSeaGreen' : index === minIndex ? 'lightcoral' : 'CornflowerBlue'),
                 borderWidth: 1
@@ -73,7 +73,7 @@ function WeekChartGenerator(x) {
                 y: {
                     beginAtZero: true,
                     callback: function (value, index, values) {
-                        return value.toFixed(2) + " €";
+                        return value + " documentos";
                     }
                 }
             },
@@ -92,7 +92,7 @@ function WeekChartGenerator(x) {
                     callbacks: {
                         label: function (context) {
                             var value = context.dataset.data[context.dataIndex];
-                            return value.toFixed(2) + " €";
+                            return value + " documentos";
                         }
                     }
                 }
@@ -101,13 +101,13 @@ function WeekChartGenerator(x) {
     });
 }
 
-function MonthChartGenerator(x) {
+function DocumentMonthChartGenerator(x) {
     new Chart(x, {
         type: 'bar',
         data: {
             labels: semanas,
             datasets: [{
-                label: "Mes nº " + "(" + month[0] + ")" + " del año " + year[0] + " - Total: " + importeTotal.toFixed(2) + " €",
+                label: "Mes nº " + "(" + month[0] + ")" + " del año " + year[0] + " - Total documentos: " + importeTotal,
                 data: ventasPorMes,
                 backgroundColor: ventasPorMes.map((value, index) => index === maxIndex ? 'MediumSeaGreen' : index === minIndex ? 'lightcoral' : 'CornflowerBlue'),
                 borderWidth: 1
@@ -118,7 +118,7 @@ function MonthChartGenerator(x) {
                 y: {
                     beginAtZero: true,
                     callback: function (value, index, values) {
-                        return value.toFixed(2) + " €";
+                        return value + " documentos";
                     }
                 }
             },
@@ -137,7 +137,7 @@ function MonthChartGenerator(x) {
                     callbacks: {
                         label: function (context) {
                             var value = context.dataset.data[context.dataIndex];
-                            return value.toFixed(2) + " €";
+                            return value + " documentos";
                         }
                     }
                 }
@@ -147,13 +147,13 @@ function MonthChartGenerator(x) {
 }
 
 
-function YearChartGenerator(x) {
+function DocumentYearChartGenerator(x) {
     new Chart(x, {
         type: 'bar',
         data: {
             labels: nombresMeses,
             datasets: [{
-                label: "Año " + year[0] + " - Total recaudado: " + importeTotal.toFixed(2) + " €",
+                label: "Año " + year[0] + " - Total documentos: " + importeTotal,
                 data: ventasPorAno,
                 backgroundColor: ventasPorAno.map((value, index) => index === maxIndex ? 'MediumSeaGreen' : index === minIndex ? 'lightcoral' : 'CornflowerBlue'),
                 borderWidth: 1
@@ -164,7 +164,7 @@ function YearChartGenerator(x) {
                 y: {
                     beginAtZero: true,
                     callback: function (value, index, values) {
-                        return value.toFixed(2) + " €";
+                        return value;
                     }
                 }
             },
@@ -183,7 +183,7 @@ function YearChartGenerator(x) {
                     callbacks: {
                         label: function (context) {
                             var value = context.dataset.data[context.dataIndex];
-                            return value.toFixed(2) + " €";
+                            return value + " documentos";
                         }
                     }
                 }
