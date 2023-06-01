@@ -4,7 +4,7 @@
     const initHour = $('#initHour');
 	const finalHour = $('#finalHour');
 
-
+    // FUNCIONALIDAD DE HACER CLICK Y HACER GRANDE EL DIV
 
     $('.divGrow').click(function () {
         var $element = $(this);
@@ -50,10 +50,21 @@
         }
     });
 
+    //FUNCION DESMARCARCAR CHECKBOXES AL MARCAR EL DE 'TODOS' Y VICEVERSA
+    var $allCheckbox = $('#all');
 
+    var $otherCheckboxes = $('.checker').not($allCheckbox);
 
-
-
+    $allCheckbox.on('change', function () {
+        if ($(this).is(':checked')) {
+            $otherCheckboxes.prop('disabled', true);
+        } else {
+            $otherCheckboxes.prop('disabled', false);
+        }
+    });
+    if ($allCheckbox.is(':checked')) {
+        $otherCheckboxes.prop('disabled', true);
+    }
 
 
 

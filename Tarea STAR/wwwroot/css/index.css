@@ -158,6 +158,8 @@ input {
     padding: 10px;
     border-radius: 1rem;
     margin-bottom: 10px;
+    display:flex;
+
 }
 
 .selectionBox_options {
@@ -165,7 +167,11 @@ input {
     justify-content: space-around;
     margin-left: 50px;
     flex-grow: 1;
-    border:1px dashed white;
+    background-color: #485FB1;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 0px 25px 7px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 25px 7px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 25px 7px rgba(0,0,0,0.25);
     gap:20px;
 }
 

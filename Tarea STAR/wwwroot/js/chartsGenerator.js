@@ -1,11 +1,26 @@
 ﻿
+
 function DaysChartGenerator(x) {
+    const maxValue = Math.max(...ventasPorDia);
+    const plugin = {
+        id: 'custom_canvas_background_color',
+        beforeDraw: (chart) => {
+            const ctx = chart.canvas.getContext('2d');
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, chart.width, chart.height);
+            ctx.restore();
+        }
+    };
 
     new Chart(x, {
         type: 'bar',
+        plugins: [plugin],
         data: {
             labels: labels,
             datasets: [{
+                fill: true,
                 label: dayNames[0] + " - Total: " + importeTotal.toFixed(2) + " €",
                 data: ventasPorDia,
                 backgroundColor: ventasPorDia.map((value, index) => {
@@ -18,11 +33,12 @@ function DaysChartGenerator(x) {
             hover: {
                 mode: 'nearest',
                 animationDuration: 0,
-                delay:0
+                delay: 0
             },
             scales: {
                 y: {
                     beginAtZero: true,
+                    max: maxValue,
                     callback: function (value, index, values) {
                         return value.toFixed(2) + " €";
                     }
@@ -56,9 +72,24 @@ function DaysChartGenerator(x) {
     });
 }
 
+
 function WeekChartGenerator(x) {
+    const maxValue = Math.max(...ventasPorSemana);
+    const plugin = {
+        id: 'custom_canvas_background_color',
+        beforeDraw: (chart) => {
+            const ctx = chart.canvas.getContext('2d');
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, chart.width, chart.height);
+            ctx.restore();
+        }
+    };
+
     new Chart(x, {
         type: 'bar',
+        plugins: [plugin],
         data: {
             labels: labels,
             datasets: [{
@@ -72,6 +103,7 @@ function WeekChartGenerator(x) {
             scales: {
                 y: {
                     beginAtZero: true,
+                    max:maxValue,
                     callback: function (value, index, values) {
                         return value.toFixed(2) + " €";
                     }
@@ -102,8 +134,22 @@ function WeekChartGenerator(x) {
 }
 
 function MonthChartGenerator(x) {
+    const maxValue = Math.max(...ventasPorMes);
+    const plugin = {
+        id: 'custom_canvas_background_color',
+        beforeDraw: (chart) => {
+            const ctx = chart.canvas.getContext('2d');
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, chart.width, chart.height);
+            ctx.restore();
+        }
+    };
+
     new Chart(x, {
         type: 'bar',
+        plugins: [plugin],
         data: {
             labels: semanas,
             datasets: [{
@@ -117,6 +163,7 @@ function MonthChartGenerator(x) {
             scales: {
                 y: {
                     beginAtZero: true,
+                    max: maxValue,
                     callback: function (value, index, values) {
                         return value.toFixed(2) + " €";
                     }
@@ -148,8 +195,22 @@ function MonthChartGenerator(x) {
 
 
 function YearChartGenerator(x) {
+    const maxValue = Math.max(...ventasPorAno);
+    const plugin = {
+        id: 'custom_canvas_background_color',
+        beforeDraw: (chart) => {
+            const ctx = chart.canvas.getContext('2d');
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, chart.width, chart.height);
+            ctx.restore();
+        }
+    };
+
     new Chart(x, {
         type: 'bar',
+        plugins: [plugin],
         data: {
             labels: nombresMeses,
             datasets: [{
@@ -163,6 +224,7 @@ function YearChartGenerator(x) {
             scales: {
                 y: {
                     beginAtZero: true,
+                    max:maxValue,
                     callback: function (value, index, values) {
                         return value.toFixed(2) + " €";
                     }

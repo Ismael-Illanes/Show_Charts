@@ -1,8 +1,21 @@
 ﻿
 function DocumentDaysChartGenerator(x) {
+    const maxValue = Math.max(...ventasPorDia);
+    const plugin = {
+        id: 'custom_canvas_background_color',
+        beforeDraw: (chart) => {
+            const ctx = chart.canvas.getContext('2d');
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, chart.width, chart.height);
+            ctx.restore();
+        }
+    };
 
     new Chart(x, {
         type: 'bar',
+        plugins: [plugin],
         data: {
             labels: labels,
             datasets: [{
@@ -18,13 +31,14 @@ function DocumentDaysChartGenerator(x) {
             hover: {
                 mode: 'nearest',
                 animationDuration: 0,
-                delay:0
+                delay: 0
             },
             scales: {
                 y: {
                     beginAtZero: true,
+                    max: maxValue,
                     callback: function (value, index, values) {
-                        return value;
+                        return value + " documentos";
                     }
                 }
             },
@@ -56,9 +70,24 @@ function DocumentDaysChartGenerator(x) {
     });
 }
 
+
 function DocumentWeekChartGenerator(x) {
+    const maxValue = Math.max(...ventasPorSemana);
+    const plugin = {
+        id: 'custom_canvas_background_color',
+        beforeDraw: (chart) => {
+            const ctx = chart.canvas.getContext('2d');
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, chart.width, chart.height);
+            ctx.restore();
+        }
+    };
+
     new Chart(x, {
         type: 'bar',
+        plugins: [plugin],
         data: {
             labels: labels,
             datasets: [{
@@ -72,6 +101,7 @@ function DocumentWeekChartGenerator(x) {
             scales: {
                 y: {
                     beginAtZero: true,
+                    max: maxValue,
                     callback: function (value, index, values) {
                         return value + " documentos";
                     }
@@ -102,8 +132,22 @@ function DocumentWeekChartGenerator(x) {
 }
 
 function DocumentMonthChartGenerator(x) {
+    const maxValue = Math.max(...ventasPorMes);
+    const plugin = {
+        id: 'custom_canvas_background_color',
+        beforeDraw: (chart) => {
+            const ctx = chart.canvas.getContext('2d');
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, chart.width, chart.height);
+            ctx.restore();
+        }
+    };
+
     new Chart(x, {
         type: 'bar',
+        plugins: [plugin],
         data: {
             labels: semanas,
             datasets: [{
@@ -117,6 +161,7 @@ function DocumentMonthChartGenerator(x) {
             scales: {
                 y: {
                     beginAtZero: true,
+                    max:maxValue,
                     callback: function (value, index, values) {
                         return value + " documentos";
                     }
@@ -148,8 +193,22 @@ function DocumentMonthChartGenerator(x) {
 
 
 function DocumentYearChartGenerator(x) {
+    const maxValue = Math.max(...ventasPorAno);
+    const plugin = {
+        id: 'custom_canvas_background_color',
+        beforeDraw: (chart) => {
+            const ctx = chart.canvas.getContext('2d');
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, chart.width, chart.height);
+            ctx.restore();
+        }
+    };
+
     new Chart(x, {
         type: 'bar',
+        plugins: [plugin],
         data: {
             labels: nombresMeses,
             datasets: [{
@@ -163,6 +222,7 @@ function DocumentYearChartGenerator(x) {
             scales: {
                 y: {
                     beginAtZero: true,
+                    max: maxValue,
                     callback: function (value, index, values) {
                         return value;
                     }
@@ -191,3 +251,46 @@ function DocumentYearChartGenerator(x) {
         }
     });
 }
+
+
+
+function demoPDF() {
+    var doc = new jsPDF();
+    var pageWidth = 210;
+    var pageHeight = 297;
+
+    var imageWidth = 180;
+    var imageHeight = 100;
+    var margin = 20;
+    const canvasElements = $('#Charts canvas');
+
+    canvasElements.each(function (index, canvas) {
+        var text = "Gráfica";
+        var textWidth = doc.getStringUnitWidth(text) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+        var textX = (pageWidth - textWidth) / 2;
+        var textY = 20;
+
+        if (index > 0) {
+            doc.addPage();
+        }
+
+        doc.setFontSize(40);
+
+        if (index === 0) {
+            textWidth = doc.getStringUnitWidth(text) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+            textX = (pageWidth - textWidth) / 2;
+            doc.text(text, textX, textY, { align: "center" });
+        } else {
+            doc.text(text, textX, textY, { align: "center" });
+        }
+
+        var imageX = (pageWidth - imageWidth) / 2;
+        var imageY = pageHeight - margin - imageHeight;
+
+        const imageData = canvas.toDataURL('image/jpeg', 1.0);
+        doc.addImage(imageData, 'JPEG', imageX, imageY, imageWidth, imageHeight);
+    });
+
+    doc.save("Charts.pdf");
+}
+
