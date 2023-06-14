@@ -134,12 +134,320 @@
 
         <button id="btnChart" type="submit">Mostrar gráficos</button>
 </form>
-            @if (Model.Ventas != null)
+
+    @if (Model.Ventas != null && Model.Filter == "importe")
+    {
+ 
+        List<string> fechas = new List<string>();
+        List<double?> importes = new List<double?>();
+        List<string> fechasMes = new List<string>();
+        List<decimal> importesMes = new List<decimal>();       
+        List<string> fechasAno = new List<string>();
+        List<decimal> importesAno = new List<decimal>();
+
+        string fechaInicio = Model.DiaInicio;
+        string fechaFinal = Model.DiaFinal;
+        string horaInicio = Model.HoraInicio;
+        string horaFinal = Model.HoraFinal;
+        string filtro = "Importe";
+        if(Model.GroupBy == "dw")
+        {
+            string filter = "Días semana";    
+            foreach (var item in Model.ListaVentasPorDia)
+        {
+            foreach (var i in item)
             {
-                <button type="button" onclick="demoPDF()" id="printButton">Generar PDF</button>
+                fechas.Add(i.Fecha);
+                importes.Add(i.Importe);
+            }
+        }
+
+        var dataArray = new object[Model.ListaVentasPorDia.Count][];
+
+        int index = 0;
+        foreach (var item in Model.ListaVentasPorDia)
+        {
+            var dataItem = new object[item.Count];
+
+            for (int i = 0; i < item.Count; i++)
+            {
+                var subItem = item[i];
+                var subDataItem = new object[2];
+                subDataItem[0] = subItem.Fecha;
+                subDataItem[1] = subItem.Importe?.ToString("0.00");
+                dataItem[i] = subDataItem;
             }
 
+            dataArray[index] = dataItem;
+            index++;
+        }
+        var arrDates = Json.Serialize(dataArray);
+            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
+        } else if (Model.GroupBy == "w")
+        {
+            string filter = "Semanas";
+            foreach(var item in Model.ListaVentasPorSemana)
+            {
+                foreach(var i in item)
+                {
+                    fechas.Add(i.Fecha);
+                    importes.Add(i.Importe);
+                }
+            }
+            var dataArray = new object[Model.ListaVentasPorSemana.Count][];
+            int index = 0;
+            foreach (var item in Model.ListaVentasPorSemana)
+            {
+                var dataItem = new object[item.Count];
 
+                for (int i = 0; i < item.Count; i++)
+                {
+                    var subItem = item[i];
+                    var subDataItem = new object[2];
+                    subDataItem[0] = subItem.Fecha;
+                    subDataItem[1] = subItem.Importe?.ToString("0.00");
+                    dataItem[i] = subDataItem;
+                }
+
+                dataArray[index] = dataItem;
+                index++;
+            }
+            var arrDates = Json.Serialize(dataArray);
+            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
+        }else if (Model.GroupBy == "m"){
+            string filter = "Meses";
+            foreach (var item in Model.ListaVentasPorMes)
+            {
+                foreach (var i in item)
+                {
+                    string semana = "Semana " + i.Semana.ToString();
+                    fechasMes.Add(semana);
+                    importesMes.Add(i.Importe);
+                }
+            }
+
+            var dataArray = new object[Model.ListaVentasPorMes.Count][];
+            int index = 0;
+
+            foreach (var item in Model.ListaVentasPorMes)
+            {
+                var dataItem = new object[item.Count];
+
+                for (int i = 0; i < item.Count; i++)
+                {
+                    var subItem = item[i];
+                    var subDataItem = new object[2];
+                    string semana = "Semana " + subItem.Semana.ToString();
+                    subDataItem[0] = semana;
+                    subDataItem[1] = subItem.Importe.ToString("0.00");
+                    dataItem[i] = subDataItem;
+                }
+
+                dataArray[index] = dataItem;
+                index++;
+            }
+            var arrDates = Json.Serialize(dataArray);
+            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
+        }else if(Model.GroupBy == "y")
+        {
+            string filter = "Años";
+            CultureInfo cultureInfo = new CultureInfo("es-ES");
+
+            foreach (var item in Model.ListaVentasPorAno)
+            {
+                foreach (var i in item)
+                {
+                    string nombreMes = cultureInfo.DateTimeFormat.GetMonthName(i.Mes);
+                    nombreMes = cultureInfo.TextInfo.ToLower(nombreMes);
+                    fechasAno.Add(nombreMes);
+                    importesAno.Add(i.Importe);
+                }
+            }
+
+            var dataArray = new object[Model.ListaVentasPorAno.Count][];
+            int index = 0;
+
+            foreach (var item in Model.ListaVentasPorAno)
+            {
+                var dataItem = new object[item.Count];
+
+                for (int i = 0; i < item.Count; i++)
+                {
+                    var subItem = item[i];
+                    var subDataItem = new object[2];
+                    string nombreMes = cultureInfo.DateTimeFormat.GetMonthName(subItem.Mes);
+                    nombreMes = cultureInfo.TextInfo.ToLower(nombreMes);
+
+                    subDataItem[0] = nombreMes;
+                    subDataItem[1] = subItem.Importe.ToString("0.00");
+                    dataItem[i] = subDataItem;
+                }
+
+                dataArray[index] = dataItem;
+                index++;
+            }
+            var arrDates = Json.Serialize(dataArray);
+            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
+        }
+        // DOCUMENTOS*************************************************
+    }else if(Model.Ventas != null && Model.Filter == "documento")
+    {
+        List<string> fechas = new List<string>();
+        List<string> documentos = new List<string>();
+        List<string> fechasMes = new List<string>();
+        List<int> documentosMes = new List<int>();
+        List<string> fechasAno = new List<string>();
+        List<int> documentosAno = new List<int>();
+
+        string fechaInicio = Model.DiaInicio;
+        string fechaFinal = Model.DiaFinal;
+        string horaInicio = Model.HoraInicio;
+        string horaFinal = Model.HoraFinal;
+        string filtro = "Documentos";
+        if (Model.GroupBy == "dw")
+        {
+            string filter = "Días semana";
+            foreach (var item in Model.ListaVentasPorDia)
+            {
+                foreach (var i in item)
+                {
+                    fechas.Add(i.Fecha);
+                    documentos.Add(i.CantidadDocumentos.ToString());
+                }
+            }
+
+            var dataArray = new object[Model.ListaVentasPorDia.Count][];
+
+            int index = 0;
+            foreach (var item in Model.ListaVentasPorDia)
+            {
+                var dataItem = new object[item.Count];
+
+                for (int i = 0; i < item.Count; i++)
+                {
+                    var subItem = item[i];
+                    var subDataItem = new object[2];
+                    subDataItem[0] = subItem.Fecha;
+                    subDataItem[1] = subItem.CantidadDocumentos.ToString();
+                    dataItem[i] = subDataItem;
+                }
+
+                dataArray[index] = dataItem;
+                index++;
+            }
+            var arrDates = Json.Serialize(dataArray);
+            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
+        }
+        else if (Model.GroupBy == "w")
+        {
+            string filter = "Semanas";
+            foreach (var item in Model.ListaVentasPorSemana)
+            {
+                foreach (var i in item)
+                {
+                    fechas.Add(i.Fecha);
+                    documentos.Add(i.CantidadDocumentos.ToString());
+                }
+            }
+            var dataArray = new object[Model.ListaVentasPorSemana.Count][];
+            int index = 0;
+            foreach (var item in Model.ListaVentasPorSemana)
+            {
+                var dataItem = new object[item.Count];
+
+                for (int i = 0; i < item.Count; i++)
+                {
+                    var subItem = item[i];
+                    var subDataItem = new object[2];
+                    subDataItem[0] = subItem.Fecha;
+                    subDataItem[1] = subItem.CantidadDocumentos.ToString();
+                    dataItem[i] = subDataItem;
+                }
+
+                dataArray[index] = dataItem;
+                index++;
+            }
+            var arrDates = Json.Serialize(dataArray);
+            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
+        }
+        else if (Model.GroupBy == "m")
+        {
+            string filter = "Meses";
+            foreach (var item in Model.ListaVentasPorMes)
+            {
+                foreach (var i in item)
+                {
+                    string semana = "Semana " + i.Semana.ToString();
+                    fechasMes.Add(semana);
+                    documentos.Add(i.CantidadDocumentos.ToString());
+                }
+            }
+
+            var dataArray = new object[Model.ListaVentasPorMes.Count][];
+            int index = 0;
+
+            foreach (var item in Model.ListaVentasPorMes)
+            {
+                var dataItem = new object[item.Count];
+
+                for (int i = 0; i < item.Count; i++)
+                {
+                    var subItem = item[i];
+                    var subDataItem = new object[2];
+                    string semana = "Semana " + subItem.Semana.ToString();
+                    subDataItem[0] = semana;
+                    subDataItem[1] = subItem.CantidadDocumentos.ToString();
+                    dataItem[i] = subDataItem;
+                }
+
+                dataArray[index] = dataItem;
+                index++;
+            }
+            var arrDates = Json.Serialize(dataArray);
+            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
+        }
+        else if (Model.GroupBy == "y")
+        {
+            string filter = "Años";
+            CultureInfo cultureInfo = new CultureInfo("es-ES");
+
+            foreach (var item in Model.ListaVentasPorAno)
+            {
+                foreach (var i in item)
+                {
+                    string nombreMes = cultureInfo.DateTimeFormat.GetMonthName(i.Mes);
+                    nombreMes = cultureInfo.TextInfo.ToLower(nombreMes);
+                    fechasAno.Add(nombreMes);
+                    documentos.Add(i.CantidadDocumentos.ToString());
+                }
+            }
+
+            var dataArray = new object[Model.ListaVentasPorAno.Count][];
+            int index = 0;
+
+            foreach (var item in Model.ListaVentasPorAno)
+            {
+                var dataItem = new object[item.Count];
+
+                for (int i = 0; i < item.Count; i++)
+                {
+                    var subItem = item[i];
+                    var subDataItem = new object[2];
+                    string nombreMes = cultureInfo.DateTimeFormat.GetMonthName(subItem.Mes);
+                    nombreMes = cultureInfo.TextInfo.ToLower(nombreMes);
+
+                    subDataItem[0] = nombreMes;
+                    subDataItem[1] = subItem.CantidadDocumentos.ToString();
+                    dataItem[i] = subDataItem;
+                }
+
+                dataArray[index] = dataItem;
+                index++;
+            }
+            var arrDates = Json.Serialize(dataArray);
+            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
+        }
+    }
 
 
 
@@ -170,6 +478,8 @@
         }
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2 "></script>
+
         for (var i = 0; i < chartsAmount; i++)
         {
                 
@@ -214,7 +524,8 @@
                 arr[i] = c;
             }
 
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2 "></script>
 
             @for (var i = 0; i < chartsAmount; i++)
             {
@@ -259,7 +570,8 @@
                 arr[i] = c;
             }
 
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2 "></script>
 
             @for (var i = 0; i < chartsAmount; i++)
             {
@@ -306,7 +618,8 @@
                 string c = "ChartYear" + i;
                 arr[i] = c;
             }
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2 "></script>
             @for (var i = 0; i < chartsAmount; i++)
             {
                 <canvas id='@arr[i]' class="divNotGrow"></canvas>

@@ -16,7 +16,7 @@ function DaysChartGenerator(x) {
 
     new Chart(x, {
         type: 'bar',
-        plugins: [plugin],
+        plugins: [plugin, ChartDataLabels],
         data: {
             labels: labels,
             datasets: [{
@@ -40,23 +40,47 @@ function DaysChartGenerator(x) {
                     beginAtZero: true,
                     max: maxValue,
                     callback: function (value, index, values) {
-                        return value.toFixed(2) + " €";
+                        return value + " documentos";
+                    },
+                    ticks: {
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        }
                     }
                 }
             },
             plugins: {
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    offset:-20,
+                    color: 'black', 
+                    font: {
+                        size: 10,
+                        weight: 'bold' 
+                    },
+                    formatter: function (value, context) {
+                        return context.dataIndex + 1;
+                    }
+                },
                 legend: {
                     labels: {
                         boxWidth: 0,
                         font: {
-                            size: 30
+                            size: 30,
+                            color:'black'
                         }
                     },
                     display: true,
-                    title: {
-                        text: "Legend",
-                        color: 'red'
-                    },
                     onClick: (e) => e.stopPropagation()
                 },
                 tooltip: {
@@ -89,7 +113,7 @@ function WeekChartGenerator(x) {
 
     new Chart(x, {
         type: 'bar',
-        plugins: [plugin],
+        plugins: [plugin, ChartDataLabels],
         data: {
             labels: labels,
             datasets: [{
@@ -103,18 +127,45 @@ function WeekChartGenerator(x) {
             scales: {
                 y: {
                     beginAtZero: true,
-                    max:maxValue,
+                    max: maxValue,
                     callback: function (value, index, values) {
-                        return value.toFixed(2) + " €";
+                        return value + " documentos";
+                    },
+                    ticks: {
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        }
                     }
                 }
             },
             plugins: {
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    offset: -20,
+                    color: 'black',
+                    font: {
+                        size: 10,
+                        weight: 'bold'
+                    },
+                    formatter: function (value, context) {
+                        return context.dataIndex + 1;
+                    }
+                },
                 legend: {
                     labels: {
                         boxWidth: 0,
                         font: {
-                            size: 15
+                            size: 25
                         }
                     },
                     display: true,
@@ -149,7 +200,7 @@ function MonthChartGenerator(x) {
 
     new Chart(x, {
         type: 'bar',
-        plugins: [plugin],
+        plugins: [plugin, ChartDataLabels],
         data: {
             labels: semanas,
             datasets: [{
@@ -165,16 +216,43 @@ function MonthChartGenerator(x) {
                     beginAtZero: true,
                     max: maxValue,
                     callback: function (value, index, values) {
-                        return value.toFixed(2) + " €";
+                        return value + " documentos";
+                    },
+                    ticks: {
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        }
                     }
                 }
             },
             plugins: {
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    offset: -20,
+                    color: 'black',
+                    font: {
+                        size: 10,
+                        weight: 'bold'
+                    },
+                    formatter: function (value, context) {
+                        return context.dataIndex + 1;
+                    }
+                },
                 legend: {
                     labels: {
                         boxWidth: 0,
                         font: {
-                            size: 15
+                            size: 25
                         }
                     },
                     display: true,
@@ -210,7 +288,7 @@ function YearChartGenerator(x) {
 
     new Chart(x, {
         type: 'bar',
-        plugins: [plugin],
+        plugins: [plugin, ChartDataLabels],
         data: {
             labels: nombresMeses,
             datasets: [{
@@ -224,18 +302,45 @@ function YearChartGenerator(x) {
             scales: {
                 y: {
                     beginAtZero: true,
-                    max:maxValue,
+                    max: maxValue,
                     callback: function (value, index, values) {
-                        return value.toFixed(2) + " €";
+                        return value + " documentos";
+                    },
+                    ticks: {
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        }
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: 'black',
+                        font: {
+                            weight: 'bold'
+                        }
                     }
                 }
             },
             plugins: {
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    offset: -20,
+                    color: 'black',
+                    font: {
+                        size: 10,
+                        weight: 'bold'
+                    },
+                    formatter: function (value, context) {
+                        return context.dataIndex + 1;
+                    }
+                },
                 legend: {
                     labels: {
                         boxWidth: 0,
                         font: {
-                            size: 15
+                            size: 25
                         }
                     },
                     display: true,
