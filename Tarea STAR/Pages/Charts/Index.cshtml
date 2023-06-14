@@ -135,7 +135,7 @@
             <button id="btnChart" type="submit">Mostrar gráficos</button>
     </form>
 
-    @if (Model.Ventas != null && Model.Filter == "importe")
+    @if (Model.Ventas != null && Model.Filter == "importe" && Model.SelectedDays.Count > 0)
     {
 
         List<string> fechas = new List<string>();
@@ -145,11 +145,64 @@
         List<string> fechasAno = new List<string>();
         List<decimal> importesAno = new List<decimal>();
 
+        string diasSeleccionados = "Analizando días: ";
+        if (Model.SelectedDays != null && Model.SelectedDays.Count > 0)
+        {
+            List<int> selectedDays = new List<int>();
+            foreach (string day in Model.SelectedDays)
+            {
+                if (int.TryParse(day, out int parsedDay))
+                {
+                    selectedDays.Add(parsedDay);
+                }
+                else
+                {
+                    diasSeleccionados = "Analizando: Todos los días";
+                    break;
+                }
+            }
+            if (diasSeleccionados != "Todos los días")
+            {
+                diasSeleccionados += GetSelectedDaysNames(selectedDays);
+            }
+        }
+        else
+        {
+            diasSeleccionados += "No se han seleccionado días.";
+        }
+
         string fechaInicio = Model.DiaInicio;
         string fechaFinal = Model.DiaFinal;
         string horaInicio = Model.HoraInicio;
         string horaFinal = Model.HoraFinal;
         string filtro = "Importe";
+
+        string GetSelectedDaysNames(List<int> selectedDays)
+        {
+            Dictionary<int, string> dayNames = new Dictionary<int, string>
+    {
+    { 0, "Domingo" },
+    { 1, "Lunes" },
+    { 2, "Martes" },
+    { 3, "Miércoles" },
+    { 4, "Jueves" },
+    { 5, "Viernes" },
+    { 6, "Sábado" },
+    { -1, "Todos los días" }
+    };
+
+            List<string> names = new List<string>();
+
+            foreach (int day in selectedDays)
+            {
+                if (dayNames.ContainsKey(day))
+                {
+                    names.Add(dayNames[day]);
+                }
+            }
+
+            return string.Join(", ", names);
+        }
         if (Model.GroupBy == "dw")
         {
             string filter = "Días semana";
@@ -182,7 +235,7 @@
                 index++;
             }
             var arrDates = Json.Serialize(dataArray);
-            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
+            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro","@diasSeleccionados")' id="printButton">Generar PDF</button>
         }
         else if (Model.GroupBy == "w")
         {
@@ -214,7 +267,7 @@
                 index++;
             }
             var arrDates = Json.Serialize(dataArray);
-            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
+            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro","@diasSeleccionados")' id="printButton">Generar PDF</button>
         }
         else if (Model.GroupBy == "m")
         {
@@ -250,7 +303,7 @@
                 index++;
             }
             var arrDates = Json.Serialize(dataArray);
-            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
+            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro","@diasSeleccionados")' id="printButton">Generar PDF</button>
         }
         else if (Model.GroupBy == "y")
         {
@@ -291,11 +344,11 @@
                 index++;
             }
             var arrDates = Json.Serialize(dataArray);
-            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
+            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro","@diasSeleccionados")' id="printButton">Generar PDF</button>
         }
         // DOCUMENTOS*************************************************
     }
-    else if (Model.Ventas != null && Model.Filter == "documento")
+    else if (Model.Ventas != null && Model.Filter == "documento" && Model.SelectedDays.Count > 0)
     {
         List<string> fechas = new List<string>();
         List<string> documentos = new List<string>();
@@ -304,11 +357,64 @@
         List<string> fechasAno = new List<string>();
         List<int> documentosAno = new List<int>();
 
+        string diasSeleccionados = "Analizando días: ";
+        if (Model.SelectedDays != null && Model.SelectedDays.Count > 0)
+        {
+            List<int> selectedDays = new List<int>();
+            foreach (string day in Model.SelectedDays)
+            {
+                if (int.TryParse(day, out int parsedDay))
+                {
+                    selectedDays.Add(parsedDay);
+                }
+                else
+                {
+                    diasSeleccionados = "Analizando: Todos los días";
+                    break;
+                }
+            }
+            if (diasSeleccionados != "Todos los días")
+            {
+                diasSeleccionados += GetSelectedDaysNames(selectedDays);
+            }
+        }
+        else
+        {
+            diasSeleccionados += "No se han seleccionado días.";
+        }
+
         string fechaInicio = Model.DiaInicio;
         string fechaFinal = Model.DiaFinal;
         string horaInicio = Model.HoraInicio;
         string horaFinal = Model.HoraFinal;
         string filtro = "Documentos";
+
+        string GetSelectedDaysNames(List<int> selectedDays)
+        {
+            Dictionary<int, string> dayNames = new Dictionary<int, string>
+    {
+    { 0, "Domingo" },
+    { 1, "Lunes" },
+    { 2, "Martes" },
+    { 3, "Miércoles" },
+    { 4, "Jueves" },
+    { 5, "Viernes" },
+    { 6, "Sábado" },
+    { -1, "Todos los días" }
+    };
+
+            List<string> names = new List<string>();
+
+            foreach (int day in selectedDays)
+            {
+                if (dayNames.ContainsKey(day))
+                {
+                    names.Add(dayNames[day]);
+                }
+            }
+
+            return string.Join(", ", names);
+        }
         if (Model.GroupBy == "dw")
         {
             string filter = "Días semana";
@@ -341,7 +447,7 @@
                 index++;
             }
             var arrDates = Json.Serialize(dataArray);
-            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
+            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro","@diasSeleccionados")' id="printButton">Generar PDF</button>
         }
         else if (Model.GroupBy == "w")
         {
@@ -373,7 +479,7 @@
                 index++;
             }
             var arrDates = Json.Serialize(dataArray);
-            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
+            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro","@diasSeleccionados")' id="printButton">Generar PDF</button>
         }
         else if (Model.GroupBy == "m")
         {
@@ -409,7 +515,7 @@
                 index++;
             }
             var arrDates = Json.Serialize(dataArray);
-            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
+            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro","@diasSeleccionados")' id="printButton">Generar PDF</button>
         }
         else if (Model.GroupBy == "y")
         {
@@ -450,7 +556,7 @@
                 index++;
             }
             var arrDates = Json.Serialize(dataArray);
-            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
+            <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro","@diasSeleccionados")' id="printButton">Generar PDF</button>
         }
     }
 
@@ -459,12 +565,12 @@
 
 
 
-    @if (Model.Ventas != null && Model.Filter == "importe")
+    @if (Model.Ventas != null && Model.Filter == "importe" && Model.SelectedDays.Count > 0)
     {
         decimal importeTotalTotal = (decimal)Model.ListaVentasPorDia.SelectMany(dia => dia).Sum(venta => venta.Importe);
         <h2>Importe total de lo filtrado: @importeTotalTotal</h2>
     }
-    else if (Model.Ventas != null && Model.Filter == "documento")
+    else if (Model.Ventas != null && Model.Filter == "documento" && Model.SelectedDays.Count > 0)
     {
         int documentosTotales = Model.ListaVentasPorDia.SelectMany(dia => dia).Sum(venta => venta.CantidadDocumentos);
         <h2>Número documentos totales de lo filtrado: @documentosTotales</h2>

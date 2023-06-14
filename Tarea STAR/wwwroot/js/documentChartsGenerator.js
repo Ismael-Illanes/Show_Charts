@@ -372,7 +372,7 @@ function DocumentYearChartGenerator(x) {
 
 
 
-function demoPDF(x, FI, FF, HI, HF, G, F) {
+function demoPDF(x, FI, FF, HI, HF, G, F,DS) {
     var doc = new jsPDF({
         orientation: 'landscape',
     });
@@ -413,13 +413,17 @@ function demoPDF(x, FI, FF, HI, HF, G, F) {
 
         var formattedStartDate = formatDate(FI);
         var formattedEndDate = formatDate(FF);
-        doc.setFontSize(10);
+        doc.setFontSize(8);
         var textDate = "Desde " + formattedStartDate + " ( " + HI + " )" + " hasta " + formattedEndDate + " ( " + HF + " )";
-        doc.text(textDate, pageWidth - 90, 20, { align: "center" });
+        doc.text(textDate, pageWidth - 90, 15, { align: "center" });
 
-        doc.setFontSize(10);
+        doc.setFontSize(8);
         var textFilters = "Agrupado por " + G + " - " + "Fitrado por " + F;
-        doc.text(textFilters, pageWidth - 90, 15, { align: "center" });
+        doc.text(textFilters, pageWidth - 90, 10, { align: "center" });
+
+        doc.setFontSize(8);
+        var textAnalyzing = DS;
+        doc.text(textAnalyzing, pageWidth - 90, 20, { align: "center" });
 
 
         doc.setFontSize(12);
