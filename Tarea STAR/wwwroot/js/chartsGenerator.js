@@ -204,7 +204,7 @@ function MonthChartGenerator(x) {
         data: {
             labels: semanas,
             datasets: [{
-                label: "Mes nº " + "(" + month[0] + ")" + " del año " + year[0] + " - Total: " + importeTotal.toFixed(2) + " €",
+                label: month[0] + " del año " + year[0] + " - Total: " + importeTotal.toFixed(2) + " €",
                 data: ventasPorMes,
                 backgroundColor: ventasPorMes.map((value, index) => index === maxIndex ? 'MediumSeaGreen' : index === minIndex ? 'lightcoral' : 'CornflowerBlue'),
                 borderWidth: 1
@@ -270,6 +270,9 @@ function MonthChartGenerator(x) {
         }
     });
 }
+
+
+
 
 
 function YearChartGenerator(x) {

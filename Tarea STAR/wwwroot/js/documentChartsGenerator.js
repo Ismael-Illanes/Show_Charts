@@ -13,7 +13,7 @@ function DocumentDaysChartGenerator(x) {
         }
     };
 
-    Chart.defaults.font.color = 'black'; 
+    Chart.defaults.font.color = 'black';
 
     new Chart(x, {
         type: 'bar',
@@ -44,8 +44,8 @@ function DocumentDaysChartGenerator(x) {
                     },
                     ticks: {
                         color: 'black',
-                        font:{
-                            weight: 'bold'  
+                        font: {
+                            weight: 'bold'
                         }
                     }
                 },
@@ -53,7 +53,7 @@ function DocumentDaysChartGenerator(x) {
                     ticks: {
                         color: 'black',
                         font: {
-                            weight:'bold'
+                            weight: 'bold'
                         }
                     }
                 }
@@ -80,7 +80,7 @@ function DocumentDaysChartGenerator(x) {
                             color: 'black',
                             font: {
                                 weight: 'bold'
-                            } 
+                            }
                         }
                     },
                     display: true,
@@ -214,7 +214,7 @@ function DocumentMonthChartGenerator(x) {
         data: {
             labels: semanas,
             datasets: [{
-                label: "Mes nº " + "(" + month[0] + ")" + " del año " + year[0] + " - Total documentos: " + importeTotal,
+                label: month[0]  + " del año " + year[0] + " - Total documentos: " + importeTotal,
                 data: ventasPorMes,
                 backgroundColor: ventasPorMes.map((value, index) => index === maxIndex ? 'MediumSeaGreen' : index === minIndex ? 'lightcoral' : 'CornflowerBlue'),
                 borderWidth: 1
@@ -263,7 +263,7 @@ function DocumentMonthChartGenerator(x) {
                         boxWidth: 0,
                         font: {
                             size: 21.5,
-                            color: 'black' 
+                            color: 'black'
                         }
                     },
                     display: true,
@@ -351,7 +351,7 @@ function DocumentYearChartGenerator(x) {
                         boxWidth: 0,
                         font: {
                             size: 29.5,
-                            color: 'black' 
+                            color: 'black'
                         }
                     },
                     display: true,
@@ -372,7 +372,7 @@ function DocumentYearChartGenerator(x) {
 
 
 
-function demoPDF(x,FI,FF,HI,HF,G,F) {
+function demoPDF(x, FI, FF, HI, HF, G, F) {
     var doc = new jsPDF({
         orientation: 'landscape',
     });
@@ -411,10 +411,10 @@ function demoPDF(x,FI,FF,HI,HF,G,F) {
         const imageData = canvas.toDataURL('image/jpeg', 1.0);
         doc.addImage(imageData, 'JPEG', imageX, imageY, imageWidth, imageHeight);
 
-        var formattedStartDate = formatDate(FI); 
-        var formattedEndDate = formatDate(FF); 
+        var formattedStartDate = formatDate(FI);
+        var formattedEndDate = formatDate(FF);
         doc.setFontSize(10);
-        var textDate = "Desde " + formattedStartDate + " ( " + HI + " )" + " hasta " + formattedEndDate + " ( " +  HF + " )";
+        var textDate = "Desde " + formattedStartDate + " ( " + HI + " )" + " hasta " + formattedEndDate + " ( " + HF + " )";
         doc.text(textDate, pageWidth - 90, 20, { align: "center" });
 
         doc.setFontSize(10);

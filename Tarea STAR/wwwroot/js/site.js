@@ -86,7 +86,7 @@
     });
 
 // FUNCTION Scroll Arrow with Progress Bar
-
+// No funciona por alguna incompatibilidad con algún estilo CSS
     const calcScrollValue = () => {
         const scrollProgress = $("#progress");
         const progressValue = $("#progress-value");

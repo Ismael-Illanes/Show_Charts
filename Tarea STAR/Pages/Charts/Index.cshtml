@@ -13,24 +13,24 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.2/jspdf.min.js"></script>
 <div id="contenedor">
 
-<form method="post" id="myForm" asp-page-handler="Index">
+    <form method="post" id="myForm" asp-page-handler="Index">
 
 
-    <div id="CIndex">
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                    {
-                        <li>@error.ErrorMessage</li>
-                    }
-                </ul>
-            </div>
-        }
+        <div id="CIndex">
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    </ul>
+                </div>
+            }
 
 
-        <div id="datePickerSection">
+            <div id="datePickerSection">
 
 
                 <div class="datePickerSectionInitial_input">
@@ -45,38 +45,38 @@
                     </div>
 
                 </div>
-                    <div class="datePickerSectionInitial_input">
-                        <div class="dateInfo">
-                            <label for="initHour"><h4>Hora inicio</h4></label>
-                            <input type="time" autocomplete="off" placeholder="HH:mm" name="HoraInicio" asp-for="@Model.HoraInicio" id="initHour" />
-                        </div>
-                        <div class="dateInfo">
-                            <label for="finalHour"><h4>Hora final</h4></label>
-                            <input type="time" autocomplete="off" placeholder="HH:mm" name="HoraFinal" asp-for="@Model.HoraFinal" id="finalHour" />
-                        </div>
+                <div class="datePickerSectionInitial_input">
+                    <div class="dateInfo">
+                        <label for="initHour"><h4>Hora inicio</h4></label>
+                        <input type="time" autocomplete="off" placeholder="HH:mm" name="HoraInicio" asp-for="@Model.HoraInicio" id="initHour" />
                     </div>
-                    <div class="selectionBox">
-                        <h4>Agrupar por:</h4>
-                        <div class="selectionBox_options">
-                            <div class="selectionBox_options_input">
-                                <input type="radio" id="group1" name="GroupBy" value="dw" @(Model.GroupBy == "dw" ? "checked" : "")>
-                                <label for="group1">Días semana</label><br>
-                            </div>
-                            <div class="selectionBox_options_input">
-                                <input type="radio" id="group2" name="GroupBy" value="w" @(Model.GroupBy == "w" ? "checked" : "")>
-                                <label for="group2">Semanas</label><br>
-                            </div>
-                            <div class="selectionBox_options_input">
-                                <input type="radio" id="group3" name="GroupBy" value="m" @(Model.GroupBy == "m" ? "checked" : "")>
-                                <label for="group3">Meses</label><br>
-                            </div>
-                            <div class="selectionBox_options_input">
-                                <input type="radio" id="group4" name="GroupBy" value="y" @(Model.GroupBy == "y" ? "checked" : "")>
-                                <label for="group4">Años</label><br>
-                            </div>
-
-
+                    <div class="dateInfo">
+                        <label for="finalHour"><h4>Hora final</h4></label>
+                        <input type="time" autocomplete="off" placeholder="HH:mm" name="HoraFinal" asp-for="@Model.HoraFinal" id="finalHour" />
+                    </div>
+                </div>
+                <div class="selectionBox">
+                    <h4>Agrupar por:</h4>
+                    <div class="selectionBox_options">
+                        <div class="selectionBox_options_input">
+                            <input type="radio" id="group1" name="GroupBy" value="dw" @(Model.GroupBy == "dw" ? "checked" : "")>
+                            <label for="group1">Días semana</label><br>
                         </div>
+                        <div class="selectionBox_options_input">
+                            <input type="radio" id="group2" name="GroupBy" value="w" @(Model.GroupBy == "w" ? "checked" : "")>
+                            <label for="group2">Semanas</label><br>
+                        </div>
+                        <div class="selectionBox_options_input">
+                            <input type="radio" id="group3" name="GroupBy" value="m" @(Model.GroupBy == "m" ? "checked" : "")>
+                            <label for="group3">Meses</label><br>
+                        </div>
+                        <div class="selectionBox_options_input">
+                            <input type="radio" id="group4" name="GroupBy" value="y" @(Model.GroupBy == "y" ? "checked" : "")>
+                            <label for="group4">Años</label><br>
+                        </div>
+
+
+                    </div>
                     <h4>Día a analizar:</h4>
                     <div class="selectionBox_options">
                         <div class="selectionBox_options_input">
@@ -125,23 +125,23 @@
                             <label for="documento">Documento</label><br>
                         </div>
                     </div>
-                    </div>
-    
-       
-        </div>
+                </div>
+
+
+            </div>
 
 
 
-        <button id="btnChart" type="submit">Mostrar gráficos</button>
-</form>
+            <button id="btnChart" type="submit">Mostrar gráficos</button>
+    </form>
 
     @if (Model.Ventas != null && Model.Filter == "importe")
     {
- 
+
         List<string> fechas = new List<string>();
         List<double?> importes = new List<double?>();
         List<string> fechasMes = new List<string>();
-        List<decimal> importesMes = new List<decimal>();       
+        List<decimal> importesMes = new List<decimal>();
         List<string> fechasAno = new List<string>();
         List<decimal> importesAno = new List<decimal>();
 
@@ -150,45 +150,46 @@
         string horaInicio = Model.HoraInicio;
         string horaFinal = Model.HoraFinal;
         string filtro = "Importe";
-        if(Model.GroupBy == "dw")
+        if (Model.GroupBy == "dw")
         {
-            string filter = "Días semana";    
+            string filter = "Días semana";
             foreach (var item in Model.ListaVentasPorDia)
-        {
-            foreach (var i in item)
             {
-                fechas.Add(i.Fecha);
-                importes.Add(i.Importe);
-            }
-        }
-
-        var dataArray = new object[Model.ListaVentasPorDia.Count][];
-
-        int index = 0;
-        foreach (var item in Model.ListaVentasPorDia)
-        {
-            var dataItem = new object[item.Count];
-
-            for (int i = 0; i < item.Count; i++)
-            {
-                var subItem = item[i];
-                var subDataItem = new object[2];
-                subDataItem[0] = subItem.Fecha;
-                subDataItem[1] = subItem.Importe?.ToString("0.00");
-                dataItem[i] = subDataItem;
+                foreach (var i in item)
+                {
+                    fechas.Add(i.Fecha);
+                    importes.Add(i.Importe);
+                }
             }
 
-            dataArray[index] = dataItem;
-            index++;
-        }
-        var arrDates = Json.Serialize(dataArray);
+            var dataArray = new object[Model.ListaVentasPorDia.Count][];
+
+            int index = 0;
+            foreach (var item in Model.ListaVentasPorDia)
+            {
+                var dataItem = new object[item.Count];
+
+                for (int i = 0; i < item.Count; i++)
+                {
+                    var subItem = item[i];
+                    var subDataItem = new object[2];
+                    subDataItem[0] = subItem.Fecha;
+                    subDataItem[1] = subItem.Importe?.ToString("0.00");
+                    dataItem[i] = subDataItem;
+                }
+
+                dataArray[index] = dataItem;
+                index++;
+            }
+            var arrDates = Json.Serialize(dataArray);
             <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
-        } else if (Model.GroupBy == "w")
+        }
+        else if (Model.GroupBy == "w")
         {
             string filter = "Semanas";
-            foreach(var item in Model.ListaVentasPorSemana)
+            foreach (var item in Model.ListaVentasPorSemana)
             {
-                foreach(var i in item)
+                foreach (var i in item)
                 {
                     fechas.Add(i.Fecha);
                     importes.Add(i.Importe);
@@ -214,7 +215,9 @@
             }
             var arrDates = Json.Serialize(dataArray);
             <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
-        }else if (Model.GroupBy == "m"){
+        }
+        else if (Model.GroupBy == "m")
+        {
             string filter = "Meses";
             foreach (var item in Model.ListaVentasPorMes)
             {
@@ -248,7 +251,8 @@
             }
             var arrDates = Json.Serialize(dataArray);
             <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
-        }else if(Model.GroupBy == "y")
+        }
+        else if (Model.GroupBy == "y")
         {
             string filter = "Años";
             CultureInfo cultureInfo = new CultureInfo("es-ES");
@@ -290,7 +294,8 @@
             <button type="button" onclick='demoPDF(@arrDates, "@fechaInicio", "@fechaFinal","@horaInicio","@horaFinal","@filter","@filtro")' id="printButton">Generar PDF</button>
         }
         // DOCUMENTOS*************************************************
-    }else if(Model.Ventas != null && Model.Filter == "documento")
+    }
+    else if (Model.Ventas != null && Model.Filter == "documento")
     {
         List<string> fechas = new List<string>();
         List<string> documentos = new List<string>();
@@ -454,51 +459,53 @@
 
 
 
-@if(Model.Ventas != null && Model.Filter == "importe")
-{
-    decimal importeTotalTotal = (decimal)Model.ListaVentasPorDia.SelectMany(dia => dia).Sum(venta => venta.Importe);
+    @if (Model.Ventas != null && Model.Filter == "importe")
+    {
+        decimal importeTotalTotal = (decimal)Model.ListaVentasPorDia.SelectMany(dia => dia).Sum(venta => venta.Importe);
         <h2>Importe total de lo filtrado: @importeTotalTotal</h2>
-    }else if( Model.Ventas != null && Model.Filter == "documento")
+    }
+    else if (Model.Ventas != null && Model.Filter == "documento")
     {
         int documentosTotales = Model.ListaVentasPorDia.SelectMany(dia => dia).Sum(venta => venta.CantidadDocumentos);
         <h2>Número documentos totales de lo filtrado: @documentosTotales</h2>
     }
- 
-<div id="Charts">
-      
-    @if (Model.GroupBy == "dw" && Model.Ventas != null && Model.Filter != null)
-    {
-        int chartsAmount = Model.ListaVentasPorDia.Count();
-        string[] arr = new string[chartsAmount];
 
-        for (var i = 0; i < chartsAmount; i++)
+    <div id="Charts">
+
+        @if (Model.GroupBy == "dw" && Model.Ventas != null && Model.Filter != null)
         {
-            string c = "ChartDay" + i;
-            arr[i] = c;
-        }
+            int chartsAmount = Model.ListaVentasPorDia.Count();
+            string[] arr = new string[chartsAmount];
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+            for (var i = 0; i < chartsAmount; i++)
+            {
+                string c = "ChartDay" + i;
+                arr[i] = c;
+            }
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2 "></script>
 
-        for (var i = 0; i < chartsAmount; i++)
-        {
-                
-               <canvas id='@arr[i]' class="divGrow"></canvas>
-                
+            for (var i = 0; i < chartsAmount; i++)
+            {
 
-                if(Model.Filter == "importe")
-                {       
-                <script>
-                document.getElementById("Charts").style.display = "grid";
-                var ventasPorDia = @Html.Raw(Json.Serialize(Model.ListaVentasPorDia[i].Select(item => item.Importe)));
-                var labels = @Html.Raw(Json.Serialize(Model.ListaVentasPorDia[i].Select(item => item.Fecha)));
-                var dayNames = @Html.Raw(Json.Serialize(Model.ListaVentasPorDia[i].Select(item => CultureInfo.GetCultureInfo("es-ES").DateTimeFormat.GetDayName(item.DayOfWeek))));
-                var maxIndex = ventasPorDia.indexOf(Math.max(...ventasPorDia));
-                var minIndex = ventasPorDia.indexOf(Math.min(...ventasPorDia));
-                var importeTotal = ventasPorDia.reduce((a, b) => a + b, 0);
-                DaysChartGenerator(@arr[i])
+                <canvas id='@arr[i]' class="divGrow"></canvas>
+
+
+                if (Model.Filter == "importe")
+                {
+                    <script>
+                        document.getElementById("Charts").style.display = "grid";
+                        var ventasPorDia = @Html.Raw(Json.Serialize(Model.ListaVentasPorDia[i].Select(item => item.Importe)));
+                        var labels = @Html.Raw(Json.Serialize(Model.ListaVentasPorDia[i].Select(item => item.Fecha)));
+                        var dayNames = @Html.Raw(Json.Serialize(Model.ListaVentasPorDia[i].Select(item => CultureInfo.GetCultureInfo("es-ES").DateTimeFormat.GetDayName(item.DayOfWeek))));
+                        var maxIndex = ventasPorDia.indexOf(Math.max(...ventasPorDia));
+                        var minIndex = ventasPorDia.indexOf(Math.min(...ventasPorDia));
+                        var importeTotal = ventasPorDia.reduce((a, b) => a + b, 0);
+                        DaysChartGenerator(@arr[i])
                     </script>
-                } else if(Model.Filter == "documento")
+                }
+                else if (Model.Filter == "documento")
                 {
                     <script>
                         document.getElementById("Charts").style.display = "grid";
@@ -512,7 +519,7 @@
                     </script>
                 }
             }
-    }
+        }
         else if (Model.GroupBy == "w" && Model.Ventas != null && Model.Filter != null)
         {
             int chartsAmount = Model.ListaVentasPorSemana.Count();
@@ -530,20 +537,21 @@
             @for (var i = 0; i < chartsAmount; i++)
             {
                 <canvas id='@arr[i]' class="divNotGrow"></canvas>
-                if(Model.Filter == "importe")
-                {                
-                <script>
-                    document.getElementById("Charts").style.display = "grid";
-                    var ventasPorSemana = @Html.Raw(Json.Serialize(Model.ListaVentasPorSemana[i].Select(item => item.Importe)));
-                    var labels = @Html.Raw(Json.Serialize(Model.ListaVentasPorSemana[i].Select(item => item.Fecha.ToString() + " - " + CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(Convert.ToDateTime(item.Fecha).DayOfWeek))));
-                    var weekNumber = @Html.Raw(Json.Serialize(Model.ListaVentasPorSemana[i].Select(item => CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(Convert.ToDateTime(item.Fecha), CalendarWeekRule.FirstDay, DayOfWeek.Monday))));
-                    var year = @Html.Raw(Json.Serialize(Model.ListaVentasPorSemana[i].Select(item => item.Year)));
-                    var maxIndex = ventasPorSemana.indexOf(Math.max(...ventasPorSemana));
-                    var minIndex = ventasPorSemana.indexOf(Math.min(...ventasPorSemana));
-                    var importeTotal = ventasPorSemana.reduce((a, b) => a + b, 0);
-                    WeekChartGenerator(@arr[i]);
+                if (Model.Filter == "importe")
+                {
+                    <script>
+                        document.getElementById("Charts").style.display = "grid";
+                        var ventasPorSemana = @Html.Raw(Json.Serialize(Model.ListaVentasPorSemana[i].Select(item => item.Importe)));
+                        var labels = @Html.Raw(Json.Serialize(Model.ListaVentasPorSemana[i].Select(item => item.Fecha.ToString() + " - " + CultureInfo.CurrentCulture.DateTimeFormat.GetDayName(Convert.ToDateTime(item.Fecha).DayOfWeek))));
+                        var weekNumber = @Html.Raw(Json.Serialize(Model.ListaVentasPorSemana[i].Select(item => CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(Convert.ToDateTime(item.Fecha), CalendarWeekRule.FirstDay, DayOfWeek.Monday))));
+                        var year = @Html.Raw(Json.Serialize(Model.ListaVentasPorSemana[i].Select(item => item.Year)));
+                        var maxIndex = ventasPorSemana.indexOf(Math.max(...ventasPorSemana));
+                        var minIndex = ventasPorSemana.indexOf(Math.min(...ventasPorSemana));
+                        var importeTotal = ventasPorSemana.reduce((a, b) => a + b, 0);
+                        WeekChartGenerator(@arr[i]);
                     </script>
-                }else if(Model.Filter == "documento")
+                }
+                else if (Model.Filter == "documento")
                 {
                     <script>
                         document.getElementById("Charts").style.display = "grid";
@@ -576,28 +584,65 @@
             @for (var i = 0; i < chartsAmount; i++)
             {
                 <canvas id='@arr[i]' class="divNotGrow"></canvas>
-                if(Model.Filter == "importe")
-                {                
-                <script>
-                    document.getElementById("Charts").style.display = "grid";
-
-                    var ventasPorMes = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Importe)));
-                    var semanas = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Semana)));
-                    var month = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Mes)));
-                    var year = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Year)));
-                    var importeTotal = ventasPorMes.reduce((a, b) => a + b, 0);
-                    var maxIndex = ventasPorMes.indexOf(Math.max(...ventasPorMes));
-                    var minIndex = ventasPorMes.indexOf(Math.min(...ventasPorMes));
-                    MonthChartGenerator(@arr[i]);
-                    </script>
-                }else if(Model.Filter == "documento")
+                if (Model.Filter == "importe")
                 {
                     <script>
                         document.getElementById("Charts").style.display = "grid";
 
+                        var monthNames = {
+                            1: "Enero",
+                            2: "Febrero",
+                            3: "Marzo",
+                            4: "Abril",
+                            5: "Mayo",
+                            6: "Junio",
+                            7: "Julio",
+                            8: "Agosto",
+                            9: "Septiembre",
+                            10: "Octubre",
+                            11: "Noviembre",
+                            12: "Diciembre"
+                        };
+
+                        var ventasPorMes = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Importe)));
+                        var semanas = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => "Semana " + item.Semana)));
+                        var monthNumbers = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Mes)));
+                        var month = monthNumbers.map(function (number) {
+                            return monthNames[number];
+                        });
+                        var year = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Year)));
+                        var importeTotal = ventasPorMes.reduce((a, b) => a + b, 0);
+                        var maxIndex = ventasPorMes.indexOf(Math.max(...ventasPorMes));
+                        var minIndex = ventasPorMes.indexOf(Math.min(...ventasPorMes));
+                        MonthChartGenerator(@arr[i]);
+                    </script>
+                }
+                else if (Model.Filter == "documento")
+                {
+                    <script>
+                        document.getElementById("Charts").style.display = "grid";
+
+                        var monthNames = {
+                            1: "Enero",
+                            2: "Febrero",
+                            3: "Marzo",
+                            4: "Abril",
+                            5: "Mayo",
+                            6: "Junio",
+                            7: "Julio",
+                            8: "Agosto",
+                            9: "Septiembre",
+                            10: "Octubre",
+                            11: "Noviembre",
+                            12: "Diciembre"
+                        };
+
                         var ventasPorMes = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.CantidadDocumentos)));
-                        var semanas = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Semana)));
-                        var month = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Mes)));
+                        var semanas = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => "Semana " + item.Semana)));
+                        var monthNumbers = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Mes)));
+                        var month = monthNumbers.map(function (number) {
+                            return monthNames[number];
+                        });
                         var year = @Html.Raw(Json.Serialize(Model.ListaVentasPorMes[i].Select(item => item.Year)));
                         var importeTotal = ventasPorMes.reduce((a, b) => a + b, 0);
                         var maxIndex = ventasPorMes.indexOf(Math.max(...ventasPorMes));
@@ -623,24 +668,25 @@
             @for (var i = 0; i < chartsAmount; i++)
             {
                 <canvas id='@arr[i]' class="divNotGrow"></canvas>
-                if(Model.Filter == "importe")
+                if (Model.Filter == "importe")
                 {
-                <script>
-                    document.getElementById("Charts").style.display = "grid";
-                    var meses = @Html.Raw(Json.Serialize(Model.ListaVentasPorAno[i].Select(item => item.Mes)));
-                    var nombresMeses = meses.map(function (mes) {
-                        var fecha = new Date(2000, mes - 1, 1); 
-                        var nombreMes = fecha.toLocaleString('es', { month: 'long' }); 
-                        return nombreMes;
-                    });
-                    var ventasPorAno = @Html.Raw(Json.Serialize(Model.ListaVentasPorAno[i].Select(item => item.Importe)));
-                    var year = @Html.Raw(Json.Serialize(Model.ListaVentasPorAno[i].Select(item => item.Year)))
-                    var importeTotal = ventasPorAno.reduce((a, b) => a + b, 0);
-                    var maxIndex = ventasPorAno.indexOf(Math.max(...ventasPorAno));
-                    var minIndex = ventasPorAno.indexOf(Math.min(...ventasPorAno));
-                    YearChartGenerator(@arr[i]);
+                    <script>
+                        document.getElementById("Charts").style.display = "grid";
+                        var meses = @Html.Raw(Json.Serialize(Model.ListaVentasPorAno[i].Select(item => item.Mes)));
+                        var nombresMeses = meses.map(function (mes) {
+                            var fecha = new Date(2000, mes - 1, 1);
+                            var nombreMes = fecha.toLocaleString('es', { month: 'long' });
+                            return nombreMes;
+                        });
+                        var ventasPorAno = @Html.Raw(Json.Serialize(Model.ListaVentasPorAno[i].Select(item => item.Importe)));
+                        var year = @Html.Raw(Json.Serialize(Model.ListaVentasPorAno[i].Select(item => item.Year)))
+                                            var importeTotal = ventasPorAno.reduce((a, b) => a + b, 0);
+                        var maxIndex = ventasPorAno.indexOf(Math.max(...ventasPorAno));
+                        var minIndex = ventasPorAno.indexOf(Math.min(...ventasPorAno));
+                        YearChartGenerator(@arr[i]);
                     </script>
-                }else if(Model.Filter == "documento")
+                }
+                else if (Model.Filter == "documento")
                 {
                     <script>
                         document.getElementById("Charts").style.display = "grid";
@@ -652,7 +698,7 @@
                         });
                         var ventasPorAno = @Html.Raw(Json.Serialize(Model.ListaVentasPorAno[i].Select(item => item.CantidadDocumentos)));
                         var year = @Html.Raw(Json.Serialize(Model.ListaVentasPorAno[i].Select(item => item.Year)))
-                                            var importeTotal = ventasPorAno.reduce((a, b) => a + b, 0);
+                                                                    var importeTotal = ventasPorAno.reduce((a, b) => a + b, 0);
                         var maxIndex = ventasPorAno.indexOf(Math.max(...ventasPorAno));
                         var minIndex = ventasPorAno.indexOf(Math.min(...ventasPorAno));
                         DocumentYearChartGenerator(@arr[i]);
@@ -660,18 +706,18 @@
                 }
             }
         }
-</div>
- 
-@*<div id="progress">
+    </div>
+
+    @*<div id="progress">
     <span id="progress-value">
-        <span class="material-symbols-outlined">
-            arrow_upward
-        </span>
+    <span class="material-symbols-outlined">
+    arrow_upward
     </span>
-</div>
+    </span>
+    </div>
 
-</div>
+    </div>
 
 
 
-*@
+    *@
