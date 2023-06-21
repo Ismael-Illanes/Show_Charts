@@ -1,129 +1,111 @@
-﻿
-// for details on configuring this project to bundle and minify static web assets.
+﻿$(document).ready(function () {
+    const initDay = $('#initDay');
+    const finalDay = $('#finalDay');
+    const initHour = $('#initHour');
+	const finalHour = $('#finalHour');
 
-// Write your JavaScript code.
+    // FUNCIONALIDAD DE HACER CLICK Y HACER GRANDE EL DIV
 
-// CREACION DE CHART***********************************************************************************************************************************************************
+    $('.divGrow').click(function () {
+        var $element = $(this);
 
-var ctx = document.getElementById("myChart").getContext("2d");
-var myChart = new Chart(ctx, {
-    type: "bar",
-    data: {
-        labels: ['col1', 'col2', 'col3'],
-        datasets: [{
-            label: ['Datos'],
-            data: [10, 9, 15],
-            backgroundColor: [
-                'rgb(66, 134, 244,0.5)',
-                'rgb(74, 135, 72,0.5)',
-                'rgb(229, 89, 50,0.5)'
-            ]
-        }]
-    },
-    options: {
-        responsive: false,
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true
-                }
-            }]
+        if ($element.css('max-height') === '350px') {
+            $element.css({
+                'max-height': 'none',
+                'max-width': 'none',
+                'position': 'fixed',
+                'left': '50%',
+                'top': '50%',
+                'transform': 'translate(-50%, -50%)',
+                'z-index': '99999'
+            });
+
+            if (!$('.overlay').length) {
+                var $overlay = $('<div>').addClass('overlay').css({
+                    'position': 'fixed',
+                    'top': '0',
+                    'left': '0',
+                    'width': '100%',
+                    'height': '100%',
+                    'background-color': 'rgba(0, 0, 0, 0.9)',
+                    'z-index': '99998'
+                });
+
+                $('body').append($overlay);
+                $overlay.click(function () {
+                    $element.trigger('click');
+                });
+            }
+        } else {
+            $element.css({
+                'max-width': '500px',
+                'max-height': '350px',
+                'position': 'static',
+                'left': 'auto',
+                'top': 'auto',
+                'transform': 'none',
+                'z-index': 'auto'
+            });
+            $('.overlay').remove();
         }
+    });
+
+    //FUNCION DESMARCARCAR CHECKBOXES AL MARCAR EL DE 'TODOS' Y VICEVERSA
+    var $allCheckbox = $('#all');
+
+    var $otherCheckboxes = $('.checker').not($allCheckbox);
+
+    $allCheckbox.on('change', function () {
+        if ($(this).is(':checked')) {
+            $otherCheckboxes.prop('disabled', true);
+        } else {
+            $otherCheckboxes.prop('disabled', false);
+        }
+    });
+    if ($allCheckbox.is(':checked')) {
+        $otherCheckboxes.prop('disabled', true);
     }
-});
 
 
 
-// CREACIÓN DE AIR-DATEPICKERS***********************************************************************************************************************************************************
 
-let buttonHoy = {
-    content: 'Hoy',
-    className: 'custom-button-classname',
-    onClick: (dp) => {
-        let date = new Date();
-        dp.selectDate(date);
-        dp.setViewDate(date);
-    }
-}
+    initDay.on('input', function () {
+        if (initDay.val().length === 0) {
+            finalDay.prop('disabled', true);
+        } else {
+            finalDay.prop('disabled', false);
+        }
+    });
 
-let buttonOK = {
-    content: 'Aceptar',
-    className: 'custom-button-classname',
-    onClick: (dp) => {
-        dp.hide()
-    }
-}
-var minValue;
+    initHour.on('input', function () {
+        finalHour.attr('min', initHour.val());
+    });
 
-let dp1 = new AirDatepicker('#datepicker1', {
-    locale: {
-        days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-        daysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-        daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-        months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-        monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-        today: 'Hoy',
-        clear: 'Limpiar',
-        dateFormat: 'dd/MM/yyyy',
-        timeFormat: 'HH:mm',
-        firstDay: 1
-    },
-    buttons: [buttonHoy, buttonOK],
-    timepicker: true,
-    dateTimeSeparator: " - ",
-    isMobile: true,
-    onHide: () => {
-        fecha = datepicker1.value
-        const cadenaOriginal = fecha;
-        const partes = cadenaOriginal.split("/");
-        const nuevoOrden = [partes[1], partes[0], partes[2]];
-        const nuevaCadena = nuevoOrden.join("/");
-        minValue = nuevaCadena.split('-')[0]
-        dp2.update({
-            minDate: minValue
+    finalDay.on('click', function () {
+        finalDay.attr('min', initDay.val());
+    });
+
+// FUNCTION Scroll Arrow with Progress Bar
+// No funciona por alguna incompatibilidad con algún estilo CSS
+    const calcScrollValue = () => {
+        const scrollProgress = $("#progress");
+        const progressValue = $("#progress-value");
+        const pos = $(document).scrollTop();
+        const calcHeight =
+            $(document).height() - $(window).height();
+        const scrollValue = Math.round((pos * 100) / calcHeight);
+        if (pos > 100) {
+            scrollProgress.css('display', 'grid');
+        } else {
+            scrollProgress.css('display', 'none');
+        }
+        scrollProgress.on("click", () => {
+            $(document).scrollTop(0);
         });
-        const dp2Input = document.querySelector('#datepicker2');
-        dp2Input.value = '';
+        scrollProgress.css('background', `conic-gradient(#243119 ${scrollValue}%, #d7d7d7 ${scrollValue}%)`);
+    };
 
-    }
-
-
-})
-
-
-let dp2 = new AirDatepicker('#datepicker2', {
-    locale: {
-        days: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-        daysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
-        daysMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-        months: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-        monthsShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-        clear: 'Limpiar',
-        dateFormat: 'dd/MM/yyyy',
-        timeFormat: 'HH:mm',
-        firstDay: 1
-    },
-    buttons: [buttonOK],
-    timepicker: true,
-    dateTimeSeparator: " - ",
-    isMobile: true,
-    onHide: () => {
-        const dp1Input = document.querySelector('#datepicker1');
-        const dp2Input = document.querySelector('#datepicker2');
-
-        const fechaInicio = dp1Input.value;
-        const fechaFinal = dp2Input.value;
-
-        const diaFinal = fechaFinal.split('-')[0];
-        const diaInicio = fechaInicio.split('-')[0];
-
-        const horaInicio = fechaInicio.split('-')[1];
-        const horaFinal = fechaFinal.split('-')[1];
-
-        if (diaInicio === diaFinal && horaFinal <= horaInicio) {
-            alert('La hora y minutos deben ser mayor que las del inicio');
-            dp2Input.value = ''
-        }
-   } 
-})
+    $(window).scroll(calcScrollValue);
+    $(window).on('load', calcScrollValue);
+});
 
